@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude Code Masterclass — FAQ for AI Builders</title>
+
+<!-- Bold Signal pairing: Archivo Black (display) + Space Grotesk (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   THEME — Bold Signal
+   Change values in :root to retheme the whole deck.
+   =========================================== */
+:root {
+  /* === LIGHT THEME — paper-cream + signature orange ===
+     To revert to dark: set --bg-primary #1a1a1a, --bg-grad to dark, --text-primary #ffffff. */
+  --bg-primary: #f7f4ec;
+  --bg-grad: linear-gradient(135deg,#fbfaf3 0%,#ece6d6 50%,#fbfaf3 100%);
+  --card-bg: #FF5722;          /* signature orange */
+  --card-bg-2: #FF8A50;        /* lighter orange for variants */
+  --text-primary: #14192a;     /* deep navy — matches Maven banner */
+  --text-on-card: #1a1a1a;
+  --text-muted: rgba(20,25,42,0.55);
+  --line: rgba(20,25,42,0.12);
+
+  --font-display: 'Archivo Black', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration: 0.7s;
+}
+
+/* ===========================================
+   BASE
+   =========================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* === viewport-base.css (mandatory, inlined) === */
+html, body { height: 100%; overflow-x: hidden; }
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--bg-grad);
+  padding: clamp(1.25rem, 2.6vw, 2.4rem);
+}
+.slide-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-height: 100%;
+  overflow: hidden;
+  padding: var(--slide-padding);
+}
+:root {
+  --title-size: clamp(1.5rem, 5vw, 4rem);
+  --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+  --body-size: clamp(0.78rem, 1.15vw, 1.05rem);
+  --small-size: clamp(0.65rem, 1vw, 0.85rem);
+  --slide-padding: clamp(1rem, 4vw, 4rem);
+  --content-gap: clamp(0.5rem, 2vw, 2rem);
+  --element-gap: clamp(0.25rem, 1vw, 1rem);
+}
+.card, .container, .content-box { max-width: min(94vw, 1400px); max-height: min(86vh, 800px); }
+.feature-list, .bullet-list { gap: clamp(0.4rem, 1vh, 1rem); }
+.feature-list li, .bullet-list li { font-size: var(--body-size); line-height: 1.45; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
+img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+
+@media (max-height: 700px) {
+  :root {
+    --slide-padding: clamp(0.75rem, 3vw, 2rem);
+    --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+    --h2-size: clamp(1rem, 3vw, 1.75rem);
+  }
+}
+@media (max-height: 600px) {
+  :root {
+    --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+    --title-size: clamp(1.1rem, 4vw, 2rem);
+    --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+  }
+  .nav-dots, .keyboard-hint, .decorative { display: none; }
+}
+@media (max-height: 500px) {
+  :root {
+    --slide-padding: clamp(0.4rem, 2vw, 1rem);
+    --title-size: clamp(1rem, 3.5vw, 1.5rem);
+    --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+    --body-size: clamp(0.65rem, 1vw, 0.85rem);
+  }
+}
+@media (max-width: 600px) {
+  :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+  .grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.2s !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* ===========================================
+   SLIDE BACKGROUND DECORATION
+   Subtle grid + radial glow on every slide
+   =========================================== */
+.slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(20,25,42,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,25,42,.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 95%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 95%);
+}
+
+/* ===========================================
+   TOP BAR — number left, breadcrumbs right
+   Bold Signal signature
+   =========================================== */
+.topbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 .25rem;
+  font-size: clamp(.7rem, .9vw, .85rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.topbar .num {
+  font-family: var(--font-display);
+  letter-spacing: .05em;
+  color: var(--text-primary);
+  font-size: clamp(.78rem, 1vw, .95rem);
+}
+.crumbs { display: flex; gap: clamp(.6rem, 1.4vw, 1.4rem); flex-wrap: wrap; justify-content: flex-end; }
+.crumbs span {
+  opacity: .35;
+  transition: opacity .2s ease, color .2s ease, transform .15s ease;
+  cursor: pointer;
+  user-select: none;
+  padding: .15rem 0;
+  position: relative;
+}
+.crumbs span:hover { opacity: 1; color: var(--card-bg); transform: translateY(-1px); }
+.crumbs span:focus-visible {
+  outline: 2px solid var(--card-bg);
+  outline-offset: 4px;
+  border-radius: 2px;
+  opacity: 1;
+}
+.crumbs span.active { opacity: 1; color: var(--card-bg); }
+.crumbs span.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -3px;
+  height: 2px;
+  background: var(--card-bg);
+  border-radius: 2px;
+}
+
+/* ===========================================
+   ANIMATIONS — reveal on slide visibility
+   =========================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity var(--duration) var(--ease-out-expo),
+    transform var(--duration) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: .05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: .15s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: .25s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: .35s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: .45s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: .55s; }
+.slide.visible .reveal:nth-child(7) { transition-delay: .65s; }
+
+.reveal-scale { opacity: 0; transform: scale(.94); transition: opacity .8s var(--ease-out-expo), transform .8s var(--ease-out-expo); }
+.slide.visible .reveal-scale { opacity: 1; transform: scale(1); }
+
+.reveal-left { opacity: 0; transform: translateX(-32px); transition: opacity .7s var(--ease-out-expo), transform .7s var(--ease-out-expo); }
+.slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+
+.reveal-right { opacity: 0; transform: translateX(32px); transition: opacity .7s var(--ease-out-expo), transform .7s var(--ease-out-expo); }
+.slide.visible .reveal-right { opacity: 1; transform: translateX(0); }
+
+/* ===========================================
+   SHARED COMPONENTS
+   =========================================== */
+
+/* Orange card — signature focal point */
+.signal-card {
+  position: relative;
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  border-radius: clamp(14px, 1.8vw, 22px);
+  padding: clamp(1.4rem, 3.2vw, 2.6rem);
+  box-shadow: 0 24px 60px rgba(255,87,34,.22), 0 2px 0 rgba(20,25,42,.05) inset;
+}
+
+/* Q kicker — small label above answer */
+.q-kicker {
+  font-family: var(--font-mono);
+  font-size: clamp(.7rem, .95vw, .85rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--card-bg);
+  margin-bottom: clamp(.5rem, 1.2vw, .9rem);
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+}
+.q-kicker::before {
+  content: "Q";
+  display: inline-grid;
+  place-items: center;
+  width: 1.5em; height: 1.5em;
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  font-weight: 800;
+}
+
+.question {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -.015em;
+  color: var(--text-primary);
+}
+
+.answer {
+  font-family: var(--font-body);
+  font-size: clamp(.95rem, 1.35vw, 1.2rem);
+  line-height: 1.55;
+  color: rgba(20,25,42,.86);
+  max-width: 78ch;
+}
+
+.answer strong { color: var(--card-bg); font-weight: 700; }
+
+.pull {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.9vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--text-primary);
+  border-left: 4px solid var(--card-bg);
+  padding-left: clamp(.85rem, 1.4vw, 1.2rem);
+  letter-spacing: -.01em;
+}
+
+/* ===========================================
+   SLIDE 1 — TITLE
+   Big orange card with FAQ mark + title
+   =========================================== */
+.title-slide .topbar .crumbs span { opacity: .55; }
+.title-card {
+  position: absolute;
+  left: clamp(1.25rem, 2.6vw, 2.4rem);
+  right: clamp(1.25rem, 2.6vw, 2.4rem);
+  bottom: clamp(1.25rem, 2.6vw, 2.4rem);
+  height: 70%;
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  border-radius: clamp(14px, 1.8vw, 22px);
+  padding: clamp(1.6rem, 3.5vw, 3rem);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  box-shadow: 0 30px 80px rgba(255,87,34,.30);
+}
+.title-card .big {
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 12vw, 11rem);
+  line-height: .82;
+  letter-spacing: -.04em;
+}
+.title-card .meta {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(.78rem, 1vw, .95rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .8;
+  margin-bottom: clamp(.6rem, 1vw, .9rem);
+}
+.title-card h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4.2vw, 3.6rem);
+  line-height: .98;
+  letter-spacing: -.02em;
+}
+.title-card .arrow {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.6rem);
+  font-weight: 700;
+  align-self: center;
+}
+.title-card .badge {
+  position: absolute;
+  top: clamp(1rem, 1.8vw, 1.5rem);
+  left: clamp(1rem, 1.8vw, 1.5rem);
+  font-family: var(--font-mono);
+  font-size: clamp(.7rem, .9vw, .8rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  background: rgba(0,0,0,.18);
+  padding: .35rem .65rem;
+  border-radius: 999px;
+}
+
+/* ===========================================
+   SLIDE — AGENDA / GRIDS
+   =========================================== */
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(.75rem, 1.4vw, 1.2rem);
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+.section-tile {
+  background: rgba(20,25,42,.04);
+  border: 1px solid var(--line);
+  border-radius: clamp(12px, 1.4vw, 18px);
+  padding: clamp(1rem, 1.8vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(.6rem, 1vw, 1rem);
+  min-height: clamp(150px, 30vh, 240px);
+  transition: background .25s ease, transform .25s ease, border-color .25s ease;
+}
+.section-tile:hover {
+  background: rgba(255,87,34,.10);
+  border-color: var(--card-bg);
+  transform: translateY(-2px);
+}
+.section-tile .num {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
+  color: var(--card-bg);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.section-tile .label {
+  font-family: var(--font-display);
+  font-size: clamp(.95rem, 1.3vw, 1.2rem);
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.section-tile .desc {
+  font-size: clamp(.72rem, .95vw, .85rem);
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-top: auto;
+}
+@media (max-width: 900px) { .section-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ===========================================
+   SECTION DIVIDER
+   Massive number + section name on orange card
+   =========================================== */
+.divider .signal-card {
+  position: absolute;
+  inset: clamp(1.25rem, 2.6vw, 2.4rem);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: clamp(2rem, 4vw, 3.5rem);
+}
+.divider .huge {
+  font-family: var(--font-display);
+  font-size: clamp(8rem, 22vw, 22rem);
+  line-height: .82;
+  letter-spacing: -.05em;
+  align-self: end;
+}
+.divider .section-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.6vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+  margin-top: clamp(.5rem, 1vw, 1rem);
+}
+.divider .section-meta {
+  font-family: var(--font-mono);
+  font-size: clamp(.75rem, 1vw, .9rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .65;
+  margin-top: .8rem;
+}
+
+/* ===========================================
+   Q&A LAYOUTS
+   =========================================== */
+.qa { display: grid; grid-template-columns: 1fr; gap: clamp(.6rem, 1.5vw, 1.2rem); margin-top: clamp(1rem, 2vh, 1.6rem); align-content: center; flex: 1; }
+.qa-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: stretch;
+  margin-top: clamp(1rem, 2vh, 1.6rem);
+  flex: 1;
+}
+.col {
+  background: rgba(20,25,42,.04);
+  border: 1px solid var(--line);
+  border-radius: clamp(12px, 1.4vw, 18px);
+  padding: clamp(1.1rem, 2vw, 1.7rem);
+  display: flex; flex-direction: column; gap: clamp(.5rem, 1vw, .8rem);
+}
+.col.orange {
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  border: none;
+  box-shadow: 0 18px 50px rgba(255,87,34,.22);
+}
+.col h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
+  letter-spacing: -.01em;
+  line-height: 1.1;
+}
+.col .lede {
+  font-size: clamp(.85rem, 1.15vw, 1rem);
+  line-height: 1.5;
+}
+.col.orange .lede { color: rgba(0,0,0,.78); }
+.col ul { list-style: none; display: flex; flex-direction: column; gap: clamp(.35rem, .8vw, .6rem); }
+.col li {
+  font-size: clamp(.78rem, 1.05vw, .95rem);
+  line-height: 1.45;
+  padding-left: 1rem;
+  position: relative;
+  color: rgba(20,25,42,.82);
+}
+.col.orange li { color: rgba(0,0,0,.85); }
+.col li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--card-bg);
+  font-weight: 700;
+}
+.col.orange li::before { color: var(--text-on-card); }
+.col .tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: clamp(.65rem, .85vw, .75rem);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: .25rem .55rem;
+  border-radius: 999px;
+  background: rgba(255,87,34,.15);
+  color: var(--card-bg);
+  width: max-content;
+  border: 1px solid rgba(255,87,34,.3);
+}
+.col.orange .tag { background: rgba(0,0,0,.15); color: var(--text-on-card); border-color: rgba(0,0,0,.2); }
+@media (max-width: 900px) { .qa-split { grid-template-columns: 1fr; } }
+
+/* Surface map — 4-column grid */
+.surface-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(.7rem, 1.2vw, 1rem);
+  margin-top: clamp(1rem, 2vh, 1.4rem);
+  flex: 1;
+  align-content: center;
+}
+.surface {
+  background: rgba(20,25,42,.04);
+  border: 1px solid var(--line);
+  border-radius: clamp(12px, 1.4vw, 18px);
+  padding: clamp(.9rem, 1.6vw, 1.3rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(.4rem, .8vw, .7rem);
+  min-height: clamp(170px, 32vh, 280px);
+}
+.surface .name {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.5vw, 1.3rem);
+  line-height: 1.05;
+}
+.surface .where {
+  font-family: var(--font-mono);
+  font-size: clamp(.65rem, .85vw, .78rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--card-bg);
+}
+.surface .desc {
+  font-size: clamp(.75rem, 1vw, .9rem);
+  color: rgba(20,25,42,.78);
+  line-height: 1.5;
+  margin-top: auto;
+}
+.surface.featured {
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  border: none;
+  box-shadow: 0 18px 50px rgba(255,87,34,.22);
+}
+.surface.featured .where { color: var(--text-on-card); opacity: .7; }
+.surface.featured .desc { color: rgba(0,0,0,.82); }
+@media (max-width: 1000px) { .surface-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Folder map — file-tree style */
+.tree {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+  margin-top: clamp(1rem, 2vh, 1.4rem);
+  flex: 1;
+  align-content: center;
+}
+.tree-block {
+  background: rgba(20,25,42,.05);
+  border: 1px solid var(--line);
+  border-radius: clamp(12px, 1.4vw, 16px);
+  padding: clamp(1.2rem, 2vw, 1.8rem);
+  font-family: var(--font-mono);
+  font-size: clamp(.78rem, 1.05vw, .95rem);
+  line-height: 1.7;
+  color: rgba(20,25,42,.85);
+}
+.tree-block .root { color: var(--card-bg); font-weight: 700; }
+.tree-block .file { color: rgba(20,25,42,.95); }
+.tree-block .annot { color: var(--text-muted); }
+.tree-block .indent { padding-left: 1.5em; }
+.tree-rules { display: flex; flex-direction: column; gap: clamp(.6rem, 1.2vw, 1rem); justify-content: center; }
+.tree-rule {
+  background: rgba(20,25,42,.04);
+  border-left: 3px solid var(--card-bg);
+  padding: clamp(.7rem, 1.2vw, 1rem) clamp(.9rem, 1.4vw, 1.2rem);
+  border-radius: 0 12px 12px 0;
+}
+.tree-rule .lbl {
+  font-family: var(--font-mono);
+  font-size: clamp(.65rem, .85vw, .75rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--card-bg);
+  margin-bottom: .25rem;
+  display: block;
+}
+.tree-rule .body {
+  font-size: clamp(.8rem, 1.05vw, .95rem);
+  line-height: 1.5;
+  color: rgba(20,25,42,.85);
+}
+@media (max-width: 1000px) { .tree { grid-template-columns: 1fr; } }
+
+/* Harness slide — 4 pillars */
+.harness-quote {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -.02em;
+  text-align: center;
+  margin: clamp(.8rem, 1.5vw, 1.2rem) 0;
+}
+.harness-quote em { color: var(--card-bg); font-style: normal; }
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(.7rem, 1.4vw, 1.1rem);
+  margin-top: clamp(1rem, 2vh, 1.5rem);
+}
+.pillar {
+  background: rgba(20,25,42,.04);
+  border: 1px solid var(--line);
+  border-radius: clamp(10px, 1.2vw, 14px);
+  padding: clamp(.9rem, 1.6vw, 1.3rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(.4rem, .8vw, .6rem);
+}
+.pillar .num {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  color: var(--card-bg);
+  line-height: 1;
+}
+.pillar .name {
+  font-family: var(--font-display);
+  font-size: clamp(.95rem, 1.3vw, 1.15rem);
+  letter-spacing: -.01em;
+}
+.pillar .body {
+  font-size: clamp(.74rem, 1vw, .88rem);
+  color: rgba(20,25,42,.78);
+  line-height: 1.5;
+}
+@media (max-width: 1000px) { .pillars { grid-template-columns: repeat(2, 1fr); } }
+
+/* Resources slide */
+.resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(.5rem, 1vw, .85rem);
+  margin-top: clamp(1rem, 2vh, 1.5rem);
+  flex: 1;
+  justify-content: center;
+}
+.resource-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: clamp(.8rem, 1.5vw, 1.2rem);
+  padding: clamp(.8rem, 1.4vw, 1.1rem) clamp(1rem, 1.8vw, 1.4rem);
+  background: rgba(20,25,42,.04);
+  border: 1px solid var(--line);
+  border-radius: clamp(10px, 1.2vw, 14px);
+  font-family: var(--font-mono);
+  transition: all .25s ease;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+.resource-item:hover {
+  background: rgba(255,87,34,.08);
+  border-color: var(--card-bg);
+  transform: translateX(4px);
+}
+.resource-item .num {
+  font-family: var(--font-display);
+  color: var(--card-bg);
+  font-size: clamp(.95rem, 1.3vw, 1.15rem);
+  min-width: 2ch;
+}
+.resource-item .url {
+  font-size: clamp(.75rem, 1.05vw, .92rem);
+  color: rgba(20,25,42,.92);
+  word-break: break-all;
+}
+.resource-item .arrow {
+  font-family: var(--font-display);
+  color: var(--card-bg);
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  transition: transform .2s ease;
+}
+.resource-item:hover .arrow { transform: translateX(4px); }
+
+/* Big stat / standout */
+.kicker-block { display: flex; flex-direction: column; gap: clamp(.4rem, .9vw, .7rem); }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(.7rem, .95vw, .82rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--card-bg);
+}
+
+/* Two-up "vs" comparison helper */
+.vs-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  padding: .15rem .55rem;
+  border-radius: 4px;
+  font-size: clamp(.7rem, .95vw, .82rem);
+  letter-spacing: .05em;
+}
+
+/* ===========================================
+   PROGRESS BAR + NAV DOTS
+   =========================================== */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: var(--card-bg);
+  width: 0%;
+  z-index: 100;
+  transition: width .25s ease;
+  box-shadow: 0 0 12px rgba(255,87,34,.6);
+}
+.nav-dots {
+  position: fixed;
+  right: clamp(.8rem, 1.5vw, 1.4rem);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  z-index: 50;
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(20,25,42,.18);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.nav-dot:hover { background: rgba(20,25,42,.4); transform: scale(1.2); }
+.nav-dot.active { background: var(--card-bg); transform: scale(1.4); box-shadow: 0 0 10px rgba(255,87,34,.6); }
+
+/* ===========================================
+   INLINE EDITING (opt-in: enabled)
+   =========================================== */
+.edit-hotzone {
+  position: fixed;
+  top: 0; left: 0;
+  width: 80px; height: 80px;
+  z-index: 10000;
+  cursor: pointer;
+}
+.edit-toggle {
+  position: fixed;
+  top: 1rem; left: 1rem;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 10001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .2s ease;
+  box-shadow: 0 6px 20px rgba(255,87,34,.4);
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle:hover { transform: scale(1.08); }
+.edit-toggle.active { background: #4ade80; }
+
+.edit-banner {
+  position: fixed;
+  top: 1rem; left: 50%;
+  transform: translate(-50%, -120%);
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  padding: .5rem 1rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  z-index: 10000;
+  transition: transform .3s var(--ease-out-expo);
+  box-shadow: 0 8px 30px rgba(255,87,34,.4);
+}
+.edit-banner.active { transform: translate(-50%, 0); }
+.edit-banner kbd {
+  background: rgba(0,0,0,.18);
+  padding: .1rem .4rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+}
+
+body.edit-active [contenteditable="true"]:hover {
+  outline: 2px dashed var(--card-bg);
+  outline-offset: 4px;
+  cursor: text;
+  border-radius: 4px;
+}
+body.edit-active [contenteditable="true"]:focus {
+  outline: 2px solid var(--card-bg);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ===========================================
+   CLOSING SLIDE
+   =========================================== */
+.close-card .big-thanks {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: .9;
+  letter-spacing: -.04em;
+}
+.close-card .signoff {
+  font-family: var(--font-body);
+  font-size: clamp(.95rem, 1.3vw, 1.15rem);
+  line-height: 1.5;
+  margin-top: clamp(.8rem, 1.4vw, 1.1rem);
+  max-width: 60ch;
+}
+
+/* ===========================================
+   CTA / WORKSHOP PLUG SLIDES
+   Used for the two Maven workshop banners
+   =========================================== */
+.cta-slide .slide-content {
+  gap: clamp(.5rem, 1.2vw, .9rem);
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.cta-slide .slide-content > .reveal:first-child { flex-shrink: 0; }
+.cta-eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(.7rem, .95vw, .82rem);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--card-bg);
+  display: inline-block;
+  margin-bottom: clamp(.4rem, .8vw, .6rem);
+}
+.cta-headline {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  color: var(--text-primary);
+}
+.cta-sub {
+  font-family: var(--font-body);
+  font-size: clamp(.88rem, 1.2vw, 1.05rem);
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 70ch;
+  margin-top: clamp(.4rem, .8vw, .6rem);
+}
+.cta-banner-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;            /* allow flex item to shrink below content size */
+  margin-top: clamp(.4rem, .8vw, .6rem);
+  border-radius: clamp(12px, 1.4vw, 18px);
+  overflow: hidden;
+  background: #ffffff;      /* matches banner bg if 'contain' letterboxes */
+  box-shadow: 0 18px 50px rgba(20,25,42,.12), 0 0 0 1px var(--line);
+  transition: transform .3s var(--ease-out-expo), box-shadow .3s ease;
+  text-decoration: none;
+  align-self: stretch;
+}
+.cta-banner-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 60px rgba(255,87,34,.30), 0 0 0 2px var(--card-bg);
+}
+.cta-banner-link img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.cta-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(.8rem, 1.6vw, 1.4rem);
+  margin-top: clamp(.4rem, .8vw, .6rem);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.cta-co {
+  font-family: var(--font-mono);
+  font-size: clamp(.7rem, .95vw, .82rem);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  background: var(--card-bg);
+  color: var(--text-on-card);
+  font-family: var(--font-display);
+  font-size: clamp(.88rem, 1.15vw, 1.02rem);
+  letter-spacing: .01em;
+  padding: clamp(.65rem, 1.1vw, .9rem) clamp(1.1rem, 1.7vw, 1.4rem);
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 12px 30px rgba(255,87,34,.30);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(255,87,34,.42);
+}
+.cta-button .arrow { font-size: 1.15em; line-height: 1; }
+/* Banner is now flex-driven; no max-height override needed */
+</style>
+</head>
+<body>
+
+<!-- =========================================== -->
+<!-- INLINE EDITING UI (opt-in enabled)          -->
+<!-- =========================================== -->
+<div class="edit-hotzone" aria-hidden="true"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)" aria-label="Toggle edit mode">✏️</button>
+<div class="edit-banner" id="editBanner">
+  Edit mode · click any text · <kbd>Ctrl+S</kbd> save · <kbd>E</kbd> exit
+</div>
+
+<!-- =========================================== -->
+<!-- PROGRESS BAR + NAV DOTS                     -->
+<!-- =========================================== -->
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+<!-- ============================================ -->
+<!-- SLIDE 01 — TITLE                              -->
+<!-- ============================================ -->
+<section class="slide title-slide">
+  <div class="topbar reveal">
+    <div class="num">FAQ — 01 / 22</div>
+    <div class="crumbs">
+      <span class="active" contenteditable="false">Tools</span>
+      <span contenteditable="false">Setup</span>
+      <span contenteditable="false">Skills</span>
+      <span contenteditable="false">Agents</span>
+      <span contenteditable="false">Automation</span>
+    </div>
+  </div>
+  <div class="title-card reveal-scale">
+    <div class="badge" contenteditable="true">Maven Lightning Lesson · May 1, 2026</div>
+    <div class="big" contenteditable="true">FAQ</div>
+    <div>
+      <div class="meta" contenteditable="true">Claude Code Masterclass</div>
+      <h1 contenteditable="true">For AI<br>Builders.</h1>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 02 — AGENDA                             -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">02 / 22</div>
+    <div class="crumbs">
+      <span class="active">Agenda</span>
+      <span>Setup</span>
+      <span>Skills</span>
+      <span>Agents</span>
+      <span>Automation</span>
+    </div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="eyebrow">// What's inside</span>
+      <h2 class="question" contenteditable="true">Five sections, bunch of questions.</h2>
+    </div>
+    <div class="section-grid reveal">
+      <div class="section-tile">
+        <div class="num">01</div>
+        <div class="label" contenteditable="true">Claude Code vs other tools</div>
+        <div class="desc" contenteditable="true">n8n, Cursor, Antigravity, Desktop, Cowork, OpenClaw, Gemini CLI.</div>
+      </div>
+      <div class="section-tile">
+        <div class="num">02</div>
+        <div class="label" contenteditable="true">CLAUDE.md & project setup</div>
+        <div class="desc" contenteditable="true">Project vs global. What it costs. When it loads.</div>
+      </div>
+      <div class="section-tile">
+        <div class="num">03</div>
+        <div class="label" contenteditable="true">Skills</div>
+        <div class="desc" contenteditable="true">Skills vs tools vs subagents. Picking, bundling, safety.</div>
+      </div>
+      <div class="section-tile">
+        <div class="num">04</div>
+        <div class="label" contenteditable="true">Agents & architecture</div>
+        <div class="desc" contenteditable="true">The .claude folder, permissions, model routing, harness, hooks.</div>
+      </div>
+      <div class="section-tile">
+        <div class="num">05</div>
+        <div class="label" contenteditable="true">Automation</div>
+        <div class="desc" contenteditable="true">End-to-end pipelines. Earning the right to step out of the loop.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 03 — SECTION 01 DIVIDER                 -->
+<!-- ============================================ -->
+<section class="slide divider">
+  <div class="topbar reveal">
+    <div class="num">03 / 22</div>
+    <div class="crumbs">
+      <span class="active">Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span>Automation</span>
+    </div>
+  </div>
+  <div class="signal-card reveal-scale">
+    <div class="huge" contenteditable="true">01</div>
+    <div>
+      <div class="section-meta" contenteditable="true">Section one</div>
+      <div class="section-name" contenteditable="true">Claude Code<br>vs. other tools.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 04 — n8n vs Claude Code                 -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">04 / 22</div>
+    <div class="crumbs"><span class="active">Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Can Claude Code replace n8n for automation/workflows?</h2>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">n8n</span>
+        <h3 contenteditable="true">When the workflow is a known graph.</h3>
+        <p class="lede" contenteditable="true">These triggers, those steps, that destination. And when non-technical teammates need to inspect or own the flow visually.</p>
+        <ul>
+          <li contenteditable="true">Predictable, repeatable steps</li>
+          <li contenteditable="true">Visual ownership matters</li>
+          <li contenteditable="true">Shared with non-builders</li>
+        </ul>
+      </div>
+      <div class="col orange reveal-right">
+        <span class="tag">Claude Code</span>
+        <h3 contenteditable="true">When judgment lives in the middle.</h3>
+        <p class="lede" contenteditable="true">Read this, decide what it is, route accordingly. An ecosystem running agentic loops — Plan → Do → Check → Repeat.</p>
+        <ul>
+          <li contenteditable="true">"What to do next" is the work</li>
+          <li contenteditable="true">Branchy, judgment-heavy paths</li>
+          <li contenteditable="true">Plenty of teams run both</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 05 — Cursor vs Claude Code              -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">05 / 22</div>
+    <div class="crumbs"><span class="active">Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">How does Claude Code compare with Cursor — and does Cursor have a CLAUDE.md equivalent?</h2>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">Cursor</span>
+        <h3 contenteditable="true">Lives in the editor. Accelerates the code you're writing.</h3>
+        <ul>
+          <li contenteditable="true">Inline, line-by-line momentum</li>
+          <li contenteditable="true">Best when you're already in the file</li>
+          <li contenteditable="true"><span class="vs-tag">AGENTS.md</span> is the CLAUDE.md analog (older: <code>.cursorrules</code>)</li>
+        </ul>
+      </div>
+      <div class="col orange reveal-right">
+        <span class="tag">Claude Code</span>
+        <h3 contenteditable="true">Lives in the terminal / IDE / standalone app. Takes longer tasks.</h3>
+        <ul>
+          <li contenteditable="true">Full features, refactors, multi-step jobs</li>
+          <li contenteditable="true">Reads codebases, runs commands, ships products</li>
+          <li contenteditable="true">Most people don't pick a side — they reach for whichever fits the moment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 06 — Surface map                        -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">06 / 22</div>
+    <div class="crumbs"><span class="active">Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Antigravity, Desktop, Cowork, OpenClaw — how do they all fit?</h2>
+      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Same family, different jobs. The mental model transfers across CLIs (Gemini's <code>GEMINI.md</code>, etc.) — the specifics don't.</p>
+    </div>
+    <div class="surface-grid reveal">
+      <div class="surface featured">
+        <span class="where">Terminal / IDE</span>
+        <div class="name" contenteditable="true">Claude Code</div>
+        <p class="desc" contenteditable="true">For builders shipping products. Reads codebases, writes files, runs commands, schedules jobs.</p>
+      </div>
+      <div class="surface">
+        <span class="where">Desktop app</span>
+        <div class="name" contenteditable="true">Claude Desktop</div>
+        <p class="desc" contenteditable="true">Visual chat with local file access and easy MCP setup. If the output is a conversation, Desktop fits.</p>
+      </div>
+      <div class="surface">
+        <span class="where">Cloud · research preview</span>
+        <div class="name" contenteditable="true">Claude Cowork</div>
+        <p class="desc" contenteditable="true">Anthropic's knowledge-work agent. Builds spreadsheets, decks, reports. Connects to Drive, Gmail, DocuSign.</p>
+      </div>
+      <div class="surface">
+        <span class="where">Local / personal</span>
+        <div class="name" contenteditable="true">OpenClaw</div>
+        <p class="desc" contenteditable="true">Personal automation across devices, runs locally. Different surface, different job — not a Cowork comparable.</p>
+      </div>
+      <div class="surface">
+        <span class="where">Full-stack builder</span>
+        <div class="name" contenteditable="true">Antigravity</div>
+        <p class="desc" contenteditable="true">High-control app generation. Pattern: prototype here, then move to Claude Code when you shift from <em>build</em> to <em>operate</em>.</p>
+      </div>
+      <div class="surface">
+        <span class="where">CLI · Google</span>
+        <div class="name" contenteditable="true">Gemini CLI</div>
+        <p class="desc" contenteditable="true">Uses <code>GEMINI.md</code>, its own extension model. Mental model transfers. Specifics don't.</p>
+      </div>
+      <div class="surface">
+        <span class="where">Workflow graphs</span>
+        <div class="name" contenteditable="true">n8n</div>
+        <p class="desc" contenteditable="true">Visual flows for known graphs. Triggers → steps → destination. Pairs well with Claude Code, not a substitute.</p>
+      </div>
+      <div class="surface">
+        <span class="where">In-editor</span>
+        <div class="name" contenteditable="true">Cursor</div>
+        <p class="desc" contenteditable="true">Editor-native acceleration on the code in front of you. <code>AGENTS.md</code> is its CLAUDE.md analog.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 07 — SECTION 02 DIVIDER                 -->
+<!-- ============================================ -->
+<section class="slide divider">
+  <div class="topbar reveal">
+    <div class="num">07 / 22</div>
+    <div class="crumbs"><span>Tools</span><span class="active">Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="signal-card reveal-scale">
+    <div class="huge" contenteditable="true">02</div>
+    <div>
+      <div class="section-meta" contenteditable="true">Section two</div>
+      <div class="section-name" contenteditable="true">CLAUDE.md<br>& project setup.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 08 — CLAUDE.md essentials               -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">08 / 22</div>
+    <div class="crumbs"><span>Tools</span><span class="active">Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Do you need a separate CLAUDE.md per project? And do these files cost tokens?</h2>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">Project CLAUDE.md</span>
+        <h3 contenteditable="true">The brain of your project.</h3>
+        <ul>
+          <li contenteditable="true">Loaded every session</li>
+          <li contenteditable="true">Carries memory, glossary, architecture</li>
+          <li contenteditable="true">Specific to this codebase</li>
+          <li contenteditable="true">Standard pattern — start here</li>
+        </ul>
+      </div>
+      <div class="col reveal">
+        <span class="tag">Global ~/.claude/CLAUDE.md</span>
+        <h3 contenteditable="true">Optional. Add if patterns repeat.</h3>
+        <ul>
+          <li contenteditable="true">Useful when the same preferences pile up across 3+ repos</li>
+          <li contenteditable="true">Plenty of people only use the project file</li>
+          <li contenteditable="true">"Add it if you feel the gap"</li>
+        </ul>
+      </div>
+      <div class="col orange reveal-right" style="grid-column: 1 / -1">
+        <span class="tag">⚠ Token reality</span>
+        <h3 contenteditable="true">A bloated CLAUDE.md is the most common own-goal.</h3>
+        <p class="lede" contenteditable="true">It's in context on every turn — costs money every turn and dilutes attention. Skills are lighter: only name + description sit in context; the body loads only when the skill fires. A handful of well-scoped skills is cheap. A hundred poorly-scoped ones become noise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 09 — CLAUDE.md vs SKILL.md              -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">09 / 22</div>
+    <div class="crumbs"><span>Tools</span><span class="active">Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Is "CLAUDE.md = what, SKILL.md = how" the right mental model?</h2>
+      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Fair shorthand. The cleaner cut is <strong>when</strong>.</p>
+    </div>
+    <div class="qa-split">
+      <div class="col orange reveal-left">
+        <span class="tag">CLAUDE.md</span>
+        <h3 contenteditable="true">WHAT — project memory.</h3>
+        <p class="lede" contenteditable="true">What's true about this codebase, always. Loaded every session.</p>
+        <ul>
+          <li contenteditable="true">Glossary, conventions, architecture</li>
+          <li contenteditable="true">Always-on context</li>
+          <li contenteditable="true">Pays its tax every turn</li>
+        </ul>
+      </div>
+      <div class="col reveal-right">
+        <span class="tag">SKILL.md</span>
+        <h3 contenteditable="true">HOW — task-specific recipe.</h3>
+        <p class="lede" contenteditable="true">Step-by-step guidance for one kind of work, when it shows up.</p>
+        <ul>
+          <li contenteditable="true">Loads only when its description matches</li>
+          <li contenteditable="true">Body is lazy-loaded</li>
+          <li contenteditable="true">Cheap to keep around</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 10 — MID-DECK CTA / WORKSHOP PLUG       -->
+<!-- ============================================ -->
+<section class="slide cta-slide">
+  <div class="topbar reveal">
+    <div class="num">10 / 22</div>
+    <div class="crumbs"></div>
+  </div>
+  <div class="slide-content">
+    <div class="reveal">
+      <span class="cta-eyebrow">// Half-time</span>
+      <h2 class="cta-headline" contenteditable="true">Want to go hands-on?</h2>
+      <p class="cta-sub" contenteditable="true">Spend half a day with us — fundamentals to API deployment, shipping a production-ready agent in Claude Code.</p>
+    </div>
+    <a class="cta-banner-link reveal-scale" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener" aria-label="Enroll in the Maven workshop: Ship Your First Production AI Agent with Claude Code in Half a Day">
+      <img src="assets/maven-workshop.webp" alt="Ship Your First Production AI Agent with Claude Code in Half a Day — Hamza Farooq & Aishwarya Ashok" />
+    </a>
+    <div class="cta-actions reveal">
+      <span class="cta-co" contenteditable="true">Co-taught by Hamza Farooq · Aishwarya Ashok</span>
+      <a class="cta-button" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener">
+        Enroll on Maven <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 11 — SECTION 03 DIVIDER                 -->
+<!-- ============================================ -->
+<section class="slide divider">
+  <div class="topbar reveal">
+    <div class="num">11 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span class="active">Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="signal-card reveal-scale">
+    <div class="huge" contenteditable="true">03</div>
+    <div>
+      <div class="section-meta" contenteditable="true">Section three</div>
+      <div class="section-name" contenteditable="true">Skills.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 11 — Skills vs tools vs subagents       -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">12 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span class="active">Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">How are skills different from tools — and from subagents?</h2>
+    </div>
+    <div class="surface-grid reveal" style="grid-template-columns: repeat(3, 1fr)">
+      <div class="surface">
+        <span class="where">= Capabilities</span>
+        <div class="name" contenteditable="true">Tools</div>
+        <p class="desc" contenteditable="true">Read, Bash, WebFetch. Claude calls them and code runs. The verbs.</p>
+      </div>
+      <div class="surface featured">
+        <span class="where">= Recipes</span>
+        <div class="name" contenteditable="true">Skills</div>
+        <p class="desc" contenteditable="true">Reusable instruction packs that tell Claude how to use those capabilities, in order, to accomplish a thing. A saved prompt with superpowers — 1000 words → one slash command.</p>
+      </div>
+      <div class="surface">
+        <span class="where">= Specialists</span>
+        <div class="name" contenteditable="true">Subagents</div>
+        <p class="desc" contenteditable="true">Specialized co-workers with their own context, tool access, and model preference. Return a summary, not a step-by-step.</p>
+      </div>
+    </div>
+    <p class="pull reveal" style="margin-top:clamp(1rem,2vh,1.5rem)" contenteditable="true">Skill: stay in the loop. Subagent: when a summary is the only part you need.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 12 — Picking, bundling, safety          -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">13 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span class="active">Skills</span><span>Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">How does Claude pick a skill — and how do I trust one I downloaded?</h2>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">Picking</span>
+        <h3 contenteditable="true">Description = the matching surface.</h3>
+        <ul>
+          <li contenteditable="true">Claude reads each skill's <code>description</code> and auto-invokes the match</li>
+          <li contenteditable="true">Vague descriptions don't fire. Specific ones do.</li>
+          <li contenteditable="true">Or call explicitly: <code>/skill-name</code></li>
+          <li contenteditable="true">It's not documentation — it's the trigger</li>
+        </ul>
+      </div>
+      <div class="col reveal">
+        <span class="tag">Bundling</span>
+        <h3 contenteditable="true">Separate &gt; one big "do everything."</h3>
+        <ul>
+          <li contenteditable="true">Bundled skills end up with descriptions so broad they always trigger or never trigger</li>
+          <li contenteditable="true">Match the skill's shape to the trigger's shape</li>
+          <li contenteditable="true">Two capabilities <em>always</em> used together? Then one is fine.</li>
+        </ul>
+      </div>
+      <div class="col orange reveal-right" style="grid-column: 1 / -1">
+        <span class="tag">⚠ Safety</span>
+        <h3 contenteditable="true">Read it like a shell script before piping to bash.</h3>
+        <p class="lede" contenteditable="true">Two real risks: prompt injection that nudges Claude into something you didn't ask for, and Bash commands that touch your system. Open the SKILL.md, check declared tools, look at any scripts. Claude Code is permission-gated by default — but the first risk only gets caught by <strong>you</strong> reading the skill.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 13 — SECTION 04 DIVIDER                 -->
+<!-- ============================================ -->
+<section class="slide divider">
+  <div class="topbar reveal">
+    <div class="num">14 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span class="active">Agents</span><span>Automation</span></div>
+  </div>
+  <div class="signal-card reveal-scale">
+    <div class="huge" contenteditable="true">04</div>
+    <div>
+      <div class="section-meta" contenteditable="true">Section four</div>
+      <div class="section-name" contenteditable="true">Agents,<br>architecture, control.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 14 — The .claude/ folder                -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">15 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span class="active">Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Where do you centrally manage agents and subagents?</h2>
+      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">The filesystem — specifically the <code>.claude/</code> folder.</p>
+    </div>
+    <div class="tree">
+      <div class="tree-block reveal-left">
+<div><span class="root">.claude/</span></div>
+<div class="indent"><span class="file">agents/</span> <span class="annot"># subagents (md + frontmatter)</span></div>
+<div class="indent" style="padding-left:3em"><span class="annot">├ researcher.md</span></div>
+<div class="indent" style="padding-left:3em"><span class="annot">└ qa-engineer.md</span></div>
+<div class="indent"><span class="file">skills/</span> <span class="annot"># reusable recipes</span></div>
+<div class="indent" style="padding-left:3em"><span class="annot">└ frontend-slides/</span></div>
+<div class="indent"><span class="file">hooks.json</span> <span class="annot"># deterministic guardrails</span></div>
+<div class="indent"><span class="file">settings.json</span> <span class="annot"># permissions, env vars</span></div>
+<br>
+<div><span class="annot"># transcripts (greppable)</span></div>
+<div><span class="root">~/.claude/projects/</span></div>
+      </div>
+      <div class="tree-rules reveal-right">
+        <div class="tree-rule">
+          <span class="lbl">Subagents</span>
+          <p class="body" contenteditable="true">Each is a markdown file with frontmatter for system prompt, tool access, and model preference.</p>
+        </div>
+        <div class="tree-rule">
+          <span class="lbl">Tracking</span>
+          <p class="body" contenteditable="true">Interactive runs show invocations inline. Scheduled runs log themselves. Transcripts are greppable after the fact.</p>
+        </div>
+        <div class="tree-rule">
+          <span class="lbl">Recap</span>
+          <p class="body" contenteditable="true">Opus 4.7 gives a recap whenever agents execute on tasks.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 15 — Permissions + Model routing        -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">16 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span class="active">Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Where do tool access and model routing live?</h2>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">Permissions · 2 layers</span>
+        <h3 contenteditable="true">Project-wide vs per-subagent.</h3>
+        <ul>
+          <li contenteditable="true"><code>settings.json</code> — project-wide allow-list</li>
+          <li contenteditable="true">Subagent frontmatter — narrower slice for specialists</li>
+          <li contenteditable="true">CLAUDE.md & skills don't grant — they instruct</li>
+        </ul>
+        <p class="pull" style="margin-top:.6rem" contenteditable="true">Permission = harness-level.<br>Instruction = conversation-level.</p>
+      </div>
+      <div class="col orange reveal-right">
+        <span class="tag">Model routing</span>
+        <h3 contenteditable="true">Per-agent model preference is the routing surface.</h3>
+        <ul>
+          <li contenteditable="true"><strong>Haiku</strong> — narrow, high-volume tasks (classifiers)</li>
+          <li contenteditable="true"><strong>Opus</strong> — reasoning-heavy work</li>
+          <li contenteditable="true">Match cost · latency · quality to what each step needs</li>
+          <li contenteditable="true">Plan → Do → Check is "models that reason + tools that act"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 16 — The Harness                        -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">17 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span class="active">Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">What exactly is a "harness"?</h2>
+    </div>
+    <p class="harness-quote reveal" contenteditable="true">The model <em>thinks</em>.<br>The harness <em>does</em>.</p>
+    <div class="pillars reveal">
+      <div class="pillar">
+        <div class="num">01</div>
+        <div class="name" contenteditable="true">The loop</div>
+        <p class="body" contenteditable="true">Keeps Plan → Do → Check → Repeat running until the task is complete.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">02</div>
+        <div class="name" contenteditable="true">Tools</div>
+        <p class="body" contenteditable="true">Exposes file edits, terminal, search, and web access as things the model can call.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">03</div>
+        <div class="name" contenteditable="true">Memory</div>
+        <p class="body" contenteditable="true">Keeps context coherent across long sessions.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">04</div>
+        <div class="name" contenteditable="true">Guardrails</div>
+        <p class="body" contenteditable="true">Every action flows through an allow-list. Risky moves require your approval.</p>
+      </div>
+    </div>
+    <p class="pull reveal" style="margin-top:clamp(.8rem,1.6vw,1.2rem)" contenteditable="true">Together — they're an agent.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 17 — Hooks vs Skills                    -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">18 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span class="active">Agents</span><span>Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Why hooks for control measures, instead of just defining them in a skill?</h2>
+      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Different guarantees.</p>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">Skills</span>
+        <h3 contenteditable="true">Instructions Claude reads.</h3>
+        <ul>
+          <li contenteditable="true">Claude decides whether to follow them</li>
+          <li contenteditable="true">Usually follows — not always</li>
+          <li contenteditable="true">Lighter, conversational, easier to evolve</li>
+          <li contenteditable="true">Good when guidance is enough</li>
+        </ul>
+      </div>
+      <div class="col orange reveal-right">
+        <span class="tag">Hooks</span>
+        <h3 contenteditable="true">Deterministic. Run every time.</h3>
+        <ul>
+          <li contenteditable="true">Fire on PreToolUse, PostToolUse, Stop</li>
+          <li contenteditable="true">No exceptions — block <code>rm -rf</code>, auto-format on edit, notify on completion</li>
+          <li contenteditable="true">If you need a <strong>guarantee</strong>, you need a hook</li>
+          <li contenteditable="true">Rigid by design — and rigidity has its place</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 18 — SECTION 05 DIVIDER                 -->
+<!-- ============================================ -->
+<section class="slide divider">
+  <div class="topbar reveal">
+    <div class="num">19 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span class="active">Automation</span></div>
+  </div>
+  <div class="signal-card reveal-scale">
+    <div class="huge" contenteditable="true">05</div>
+    <div>
+      <div class="section-meta" contenteditable="true">Section five</div>
+      <div class="section-name" contenteditable="true">Automation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 19 — End-to-end automation              -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">20 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span class="active">Automation</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="q-kicker">Question</span>
+      <h2 class="question" contenteditable="true">Can you fully automate topic → draft → publish on a schedule?</h2>
+      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Yes. The pieces map directly to the rest of the deck.</p>
+    </div>
+    <div class="qa-split">
+      <div class="col reveal-left">
+        <span class="tag">The pipeline</span>
+        <h3 contenteditable="true">Subagents do the work.</h3>
+        <ul>
+          <li contenteditable="true">Research · Drafting · Formatting · Publishing</li>
+          <li contenteditable="true">MCP connectors hit Substack, Drive, Gmail</li>
+          <li contenteditable="true">Schedule recurring tasks — built-in capability</li>
+        </ul>
+      </div>
+      <div class="col orange reveal-right">
+        <span class="tag">⚠ The hard part</span>
+        <h3 contenteditable="true">Earn the right to take yourself out of the loop.</h3>
+        <ul>
+          <li contenteditable="true">Start <strong>semi-autonomous</strong>: agent drafts, you approve</li>
+          <li contenteditable="true">Watch what goes wrong for two weeks</li>
+          <li contenteditable="true">Once failure modes are predictable & acceptable — tighten the loop</li>
+          <li contenteditable="true">Trust is built, not declared</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 21 — NEAR-END CTA / WORKSHOP PLUG       -->
+<!-- ============================================ -->
+<section class="slide cta-slide">
+  <div class="topbar reveal">
+    <div class="num">21 / 22</div>
+    <div class="crumbs"></div>
+  </div>
+  <div class="slide-content">
+    <div class="reveal">
+      <span class="cta-eyebrow">// One more thing</span>
+      <h2 class="cta-headline" contenteditable="true">From these FAQs to your first production agent.</h2>
+      <p class="cta-sub" contenteditable="true">If today's questions sparked something — the workshop is where you build it. Half a day. Live, hands-on, end-to-end.</p>
+    </div>
+    <a class="cta-banner-link reveal-scale" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener" aria-label="Reserve your spot in the Maven workshop">
+      <img src="assets/maven-workshop.webp" alt="Ship Your First Production AI Agent with Claude Code in Half a Day" />
+    </a>
+    <div class="cta-actions reveal">
+      <span class="cta-co" contenteditable="true">Hamza Farooq · Aishwarya Ashok · Maven</span>
+      <a class="cta-button" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener">
+        Reserve your spot <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SLIDE 22 — Resources & Close                  -->
+<!-- ============================================ -->
+<section class="slide">
+  <div class="topbar reveal">
+    <div class="num">22 / 22</div>
+    <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span class="active">Resources</span></div>
+  </div>
+  <div class="slide-content">
+    <div class="kicker-block reveal">
+      <span class="eyebrow">// Starter repos & demos</span>
+      <h2 class="question" contenteditable="true">Resources to keep building.</h2>
+    </div>
+    <div class="resource-list reveal">
+      <a class="resource-item" href="https://github.com/hamzafarooq/claude-code-starter" target="_blank" rel="noopener">
+        <span class="num">01</span>
+        <span class="url">github.com/hamzafarooq/claude-code-starter</span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="resource-item" href="https://github.com/traversaal-ai/agents-in-action" target="_blank" rel="noopener">
+        <span class="num">02</span>
+        <span class="url">github.com/traversaal-ai/agents-in-action</span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="resource-item" href="https://github.com/zarazhangrui/frontend-slides" target="_blank" rel="noopener">
+        <span class="num">03</span>
+        <span class="url">github.com/zarazhangrui/frontend-slides</span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="resource-item" href="https://github.com/aishwaryaashok14/thefoundersfoyer-ai-product-skills" target="_blank" rel="noopener">
+        <span class="num">04</span>
+        <span class="url">github.com/aishwaryaashok14/thefoundersfoyer-ai-product-skills</span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="resource-item" href="https://github.com/obra/superpowers" target="_blank" rel="noopener">
+        <span class="num">05</span>
+        <span class="url">github.com/obra/superpowers</span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="resource-item" href="https://skills.sh/" target="_blank" rel="noopener">
+        <span class="num">06</span>
+        <span class="url">skills.sh</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   - Keyboard / wheel / touch navigation
+   - Intersection observer for animations
+   - Progress bar + nav dots
+   - Inline editing (opt-in: enabled)
+   =========================================== */
+// Section navigation map — each entry: name + slide index (0-based) to jump to.
+// Workshop is the last section, points to the near-end CTA slide.
+const SECTIONS = [
+  { name: 'Tools',      target: 2  },  // § 01 divider
+  { name: 'Setup',      target: 6  },  // § 02 divider
+  { name: 'Skills',     target: 10 },  // § 03 divider
+  { name: 'Agents',     target: 13 },  // § 04 divider
+  { name: 'Automation', target: 18 },  // § 05 divider
+  { name: 'Workshop',   target: 20 }   // near-end CTA
+];
+
+class SlidePresentation {
+  constructor() {
+    this.slides = Array.from(document.querySelectorAll('.slide'));
+    this.currentSlide = 0;
+    this.progressBar = document.getElementById('progressBar');
+    this.navDotsContainer = document.getElementById('navDots');
+
+    this.setupCrumbNav();             // build clickable section crumbs (must run before observer)
+    this.setupIntersectionObserver();
+    this.setupKeyboardNav();
+    this.setupTouchNav();
+    this.setupWheelNav();
+    this.setupProgressBar();
+    this.setupNavDots();
+  }
+
+  // Determine which section is "active" for a given slide index.
+  // CTA slides (idx 9, 20) and Resources (21) light up Workshop.
+  activeForSlide(i) {
+    if (i < 6)   return 'Tools';        // 0..5: title, agenda, §01 divider, n8n, Cursor, Surface map
+    if (i < 9)   return 'Setup';        // 6..8: §02 divider, CLAUDE.md, vs SKILL.md
+    if (i === 9) return 'Workshop';     // mid-deck CTA
+    if (i < 13)  return 'Skills';       // 10..12: §03 divider, Skills vs, Picking
+    if (i < 18)  return 'Agents';       // 13..17: §04 divider, .claude/, perms, harness, hooks
+    if (i < 20)  return 'Automation';   // 18..19: §05 divider, Automation answer
+    return 'Workshop';                  // 20..21: near-end CTA, Resources
+  }
+
+  // Inject the crumb HTML into every slide's .crumbs container, wire up clicks.
+  // Called once at boot — slide-specific active state is baked in per slide.
+  setupCrumbNav() {
+    this.slides.forEach((slide, i) => {
+      const container = slide.querySelector('.crumbs');
+      if (!container) return;
+      container.innerHTML = '';
+      const active = this.activeForSlide(i);
+      SECTIONS.forEach(s => {
+        const span = document.createElement('span');
+        span.textContent = s.name;
+        span.setAttribute('role', 'button');
+        span.setAttribute('tabindex', '0');
+        span.setAttribute('aria-label', `Go to ${s.name} section`);
+        if (s.name === active) span.classList.add('active');
+        span.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.goTo(s.target);
+        });
+        span.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.goTo(s.target);
+          }
+        });
+        container.appendChild(span);
+      });
+    });
+  }
+
+  // Add .visible class when slide enters viewport — triggers CSS reveal
+  setupIntersectionObserver() {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && e.intersectionRatio > 0.5) {
+          e.target.classList.add('visible');
+          this.currentSlide = this.slides.indexOf(e.target);
+          this.updateNavDots();
+          this.updateProgressBar();
+        }
+      });
+    }, { threshold: [0, 0.5, 1] });
+    this.slides.forEach(s => obs.observe(s));
+  }
+
+  // Arrow keys (↑↓←→), Space, Page Up/Down, < > , . — skip when editing text
+  setupKeyboardNav() {
+    document.addEventListener('keydown', (e) => {
+      if (document.activeElement?.getAttribute('contenteditable') === 'true') return;
+      const k = e.key;
+      if (k === 'ArrowDown' || k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === '>' || k === '.') {
+        e.preventDefault(); this.next();
+      } else if (k === 'ArrowUp' || k === 'ArrowLeft' || k === 'PageUp' || k === '<' || k === ',') {
+        e.preventDefault(); this.prev();
+      } else if (k === 'Home') { e.preventDefault(); this.goTo(0); }
+      else if (k === 'End')  { e.preventDefault(); this.goTo(this.slides.length - 1); }
+    });
+  }
+
+  // Touch / swipe support
+  setupTouchNav() {
+    let startY = 0;
+    document.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dy) < 50) return;
+      if (dy < 0) this.next(); else this.prev();
+    }, { passive: true });
+  }
+
+  // Mouse wheel with debounce
+  setupWheelNav() {
+    let cooling = false;
+    document.addEventListener('wheel', (e) => {
+      if (cooling) return;
+      if (Math.abs(e.deltaY) < 30) return;
+      cooling = true;
+      if (e.deltaY > 0) this.next(); else this.prev();
+      setTimeout(() => cooling = false, 700);
+    }, { passive: true });
+  }
+
+  setupProgressBar() { this.updateProgressBar(); }
+  updateProgressBar() {
+    const pct = ((this.currentSlide + 1) / this.slides.length) * 100;
+    if (this.progressBar) this.progressBar.style.width = pct + '%';
+  }
+
+  // Build dot for each slide. Always clear first — re-opening saved file
+  // can otherwise duplicate dots if outerHTML captured them.
+  setupNavDots() {
+    this.navDotsContainer.innerHTML = '';
+    this.slides.forEach((s, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.addEventListener('click', () => this.goTo(i));
+      this.navDotsContainer.appendChild(dot);
+    });
+  }
+  updateNavDots() {
+    const dots = this.navDotsContainer.querySelectorAll('.nav-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === this.currentSlide));
+  }
+
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  goTo(i) {
+    this.currentSlide = i;
+    this.slides[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/* ===========================================
+   INLINE EDITING CONTROLLER (opt-in: enabled)
+   Hover top-left corner or press E to enter edit mode.
+   Click any text to edit, Ctrl+S to export edited file.
+   =========================================== */
+class InlineEditor {
+  constructor() {
+    this.isActive = false;
+    this.STORAGE_KEY = 'claude-code-faq-deck-edits-v3';
+    this.banner = document.getElementById('editBanner');
+    this.toggle = document.getElementById('editToggle');
+    this.hotzone = document.querySelector('.edit-hotzone');
+
+    this.bindToggle();
+    this.bindHotzone();
+    this.bindKeyboard();
+    this.bindAutosave();
+    this.restoreEdits();
+  }
+
+  bindToggle() {
+    this.toggle.addEventListener('click', () => this.toggleEditMode());
+  }
+
+  // Hotzone hover with 400ms grace period — required because pointer-events:none
+  // breaks the hover chain when using CSS-only ~ sibling selectors.
+  bindHotzone() {
+    let hideTimeout = null;
+    const show = () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); };
+    const scheduleHide = () => {
+      hideTimeout = setTimeout(() => {
+        if (!this.isActive) this.toggle.classList.remove('show');
+      }, 400);
+    };
+    this.hotzone.addEventListener('mouseenter', show);
+    this.hotzone.addEventListener('mouseleave', scheduleHide);
+    this.toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    this.toggle.addEventListener('mouseleave', scheduleHide);
+    this.hotzone.addEventListener('click', () => this.toggleEditMode());
+  }
+
+  bindKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      // E toggles edit mode (skip if currently editing text)
+      if ((e.key === 'e' || e.key === 'E') &&
+          !e.target.getAttribute?.('contenteditable') &&
+          !e.metaKey && !e.ctrlKey) {
+        this.toggleEditMode();
+      }
+      // Ctrl/Cmd + S exports
+      if ((e.key === 's' || e.key === 'S') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        this.exportFile();
+      }
+    });
+  }
+
+  bindAutosave() {
+    document.addEventListener('input', (e) => {
+      if (e.target.getAttribute('contenteditable') === 'true') {
+        this.saveEdits();
+      }
+    });
+  }
+
+  toggleEditMode() {
+    this.isActive = !this.isActive;
+    document.body.classList.toggle('edit-active', this.isActive);
+    this.banner.classList.toggle('active', this.isActive);
+    this.toggle.classList.toggle('active', this.isActive);
+    if (this.isActive) this.toggle.classList.add('show');
+
+    // Toggle contenteditable on every editable element
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      // Only toggle elements that were originally editable (skip false ones in title slide)
+      if (this.isActive) {
+        if (el.getAttribute('contenteditable') !== 'false') el.setAttribute('contenteditable', 'true');
+      } else {
+        if (el.getAttribute('contenteditable') === 'true') el.setAttribute('contenteditable', 'false');
+      }
+    });
+  }
+
+  saveEdits() {
+    const edits = {};
+    document.querySelectorAll('[contenteditable]').forEach((el, i) => {
+      edits[i] = el.innerHTML;
+    });
+    try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(edits)); } catch (e) {}
+  }
+
+  restoreEdits() {
+    try {
+      const saved = localStorage.getItem(this.STORAGE_KEY);
+      if (!saved) return;
+      const edits = JSON.parse(saved);
+      document.querySelectorAll('[contenteditable]').forEach((el, i) => {
+        if (edits[i] !== undefined) el.innerHTML = edits[i];
+      });
+    } catch (e) {}
+  }
+
+  // CRITICAL: strip edit state before capturing outerHTML, otherwise the
+  // saved file opens permanently in edit mode (dashed outlines, banner, etc.)
+  exportFile() {
+    const editableEls = Array.from(document.querySelectorAll('[contenteditable="true"]'));
+    editableEls.forEach(el => el.removeAttribute('contenteditable'));
+    document.body.classList.remove('edit-active');
+    this.toggle.classList.remove('active', 'show');
+    this.banner.classList.remove('active', 'show');
+
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+    // Restore edit state so the user can keep editing
+    document.body.classList.add('edit-active');
+    editableEls.forEach(el => el.setAttribute('contenteditable', 'true'));
+    this.toggle.classList.add('active', 'show');
+    this.banner.classList.add('active');
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'claude-code-masterclass-faq.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+}
+
+/* === Boot === */
+const presentation = new SlidePresentation();
+const editor = new InlineEditor();
+
+// Mark first slide visible immediately so animations fire on load
+window.addEventListener('load', () => {
+  document.querySelector('.slide')?.classList.add('visible');
+});
+</script>
+</body>
+</html>
