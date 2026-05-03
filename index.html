@@ -504,12 +504,38 @@ img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fi
   flex-direction: column;
   gap: clamp(.6rem, 1vw, 1rem);
   min-height: clamp(150px, 30vh, 240px);
-  transition: background .25s ease, transform .25s ease, border-color .25s ease;
+  transition: background .25s ease, transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  cursor: pointer;
+  user-select: none;
 }
 .section-tile:hover {
   background: rgba(255,87,34,.10);
   border-color: var(--card-bg);
   transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255,87,34,.18);
+}
+.section-tile:focus-visible {
+  outline: 2px solid var(--card-bg);
+  outline-offset: 4px;
+}
+.section-tile .jump {
+  font-family: var(--font-mono);
+  font-size: clamp(.62rem, .8vw, .72rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--card-bg);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity .2s ease, transform .2s ease;
+  margin-top: .35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+}
+.section-tile:hover .jump,
+.section-tile:focus-visible .jump {
+  opacity: 1;
+  transform: translateX(0);
 }
 .section-tile .num {
   font-family: var(--font-display);
@@ -876,73 +902,6 @@ img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fi
 .nav-dot.active { background: var(--card-bg); transform: scale(1.4); box-shadow: 0 0 10px rgba(255,87,34,.6); }
 
 /* ===========================================
-   INLINE EDITING (opt-in: enabled)
-   =========================================== */
-.edit-hotzone {
-  position: fixed;
-  top: 0; left: 0;
-  width: 80px; height: 80px;
-  z-index: 10000;
-  cursor: pointer;
-}
-.edit-toggle {
-  position: fixed;
-  top: 1rem; left: 1rem;
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: var(--card-bg);
-  color: var(--text-on-card);
-  border: none;
-  font-size: 1.1rem;
-  cursor: pointer;
-  z-index: 10001;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .3s ease, transform .2s ease;
-  box-shadow: 0 6px 20px rgba(255,87,34,.4);
-}
-.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
-.edit-toggle:hover { transform: scale(1.08); }
-.edit-toggle.active { background: #4ade80; }
-
-.edit-banner {
-  position: fixed;
-  top: 1rem; left: 50%;
-  transform: translate(-50%, -120%);
-  background: var(--card-bg);
-  color: var(--text-on-card);
-  padding: .5rem 1rem;
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: .8rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  z-index: 10000;
-  transition: transform .3s var(--ease-out-expo);
-  box-shadow: 0 8px 30px rgba(255,87,34,.4);
-}
-.edit-banner.active { transform: translate(-50%, 0); }
-.edit-banner kbd {
-  background: rgba(0,0,0,.18);
-  padding: .1rem .4rem;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: .7rem;
-}
-
-body.edit-active [contenteditable="true"]:hover {
-  outline: 2px dashed var(--card-bg);
-  outline-offset: 4px;
-  cursor: text;
-  border-radius: 4px;
-}
-body.edit-active [contenteditable="true"]:focus {
-  outline: 2px solid var(--card-bg);
-  outline-offset: 4px;
-  border-radius: 4px;
-}
-
-/* ===========================================
    CLOSING SLIDE
    =========================================== */
 .close-card .big-thanks {
@@ -1103,15 +1062,6 @@ body.edit-active [contenteditable="true"]:focus {
 <body>
 
 <!-- =========================================== -->
-<!-- INLINE EDITING UI (opt-in enabled)          -->
-<!-- =========================================== -->
-<div class="edit-hotzone" aria-hidden="true"></div>
-<button class="edit-toggle" id="editToggle" title="Edit mode (E)" aria-label="Toggle edit mode">✏️</button>
-<div class="edit-banner" id="editBanner">
-  Edit mode · click any text · <kbd>Ctrl+S</kbd> save · <kbd>E</kbd> exit
-</div>
-
-<!-- =========================================== -->
 <!-- PROGRESS BAR + NAV DOTS                     -->
 <!-- =========================================== -->
 <div class="progress-bar" id="progressBar"></div>
@@ -1124,7 +1074,7 @@ body.edit-active [contenteditable="true"]:focus {
 <section class="slide title-slide">
   <a class="title-cta-strip reveal" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener" aria-label="Enroll in the live Maven workshop">
     <span class="title-cta-eyebrow">★ Live · May 8</span>
-    <span class="title-cta-text" contenteditable="true">Ship Your First Production AI Agent with Claude Code in Half a Day — Live workshop with Hamza & Aishwarya, May 8</span>
+    <span class="title-cta-text">Ship Your First Production AI Agent with Claude Code in Half a Day — Live workshop with Hamza & Aishwarya, May 8</span>
     <span class="title-cta-arrow">Enroll on Maven →</span>
   </a>
   <div class="topbar reveal">
@@ -1133,17 +1083,17 @@ body.edit-active [contenteditable="true"]:focus {
   </div>
   <div class="title-card reveal-scale">
     <div class="title-text">
-      <div class="badge" contenteditable="true">Maven Lightning Lesson · May 1, 2026</div>
-      <div class="big" contenteditable="true">FAQ</div>
-      <div class="meta" contenteditable="true">Claude Code Masterclass</div>
-      <h1 contenteditable="true">For AI<br>Builders.</h1>
-      <p class="title-sub" contenteditable="true">2,000+ people joined us live and asked questions. We collated the top ones — answered here, in the original voice from the session.</p>
+      <div class="badge">Maven Lightning Lesson · May 1, 2026</div>
+      <div class="big">22 FAQs</div>
+      <div class="meta">Claude Code Masterclass</div>
+      <h1>For AI<br>Builders.</h1>
+      <p class="title-sub">2,000+ people joined us live and asked questions. We collated the top 22 ones — answered here, from the context of the session.</p>
     </div>
     <div class="title-photo">
       <img src="assets/instructors.png" alt="Hamza Farooq & Aishwarya Ashok" />
       <div class="title-credits">
-        <div class="credit"><strong contenteditable="true">Hamza Farooq</strong><span contenteditable="true">Founder · Ex-Google · Prof UCLA & UMN</span></div>
-        <div class="credit"><strong contenteditable="true">Aishwarya Ashok</strong><span contenteditable="true">AI Product Builder · Startup Advisor</span></div>
+        <div class="credit"><strong>Hamza Farooq</strong><span>Founder · Ex-Google · Prof UCLA & UMN</span></div>
+        <div class="credit"><strong>Aishwarya Ashok</strong><span>AI Product Builder · Startup Advisor</span></div>
       </div>
     </div>
   </div>
@@ -1166,33 +1116,38 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="eyebrow">// What's inside</span>
-      <h2 class="question" contenteditable="true">Five sections, bunch of questions.</h2>
+      <h2 class="question">Five sections, bunch of questions.</h2>
     </div>
     <div class="section-grid reveal">
-      <div class="section-tile">
+      <div class="section-tile" data-target="3" role="link" tabindex="0" aria-label="Jump to first question in Claude Code vs other tools">
         <div class="num">01</div>
-        <div class="label" contenteditable="true">Claude Code vs other tools</div>
-        <div class="desc" contenteditable="true">n8n, Cursor, Antigravity, Desktop, Cowork, OpenClaw, Gemini CLI.</div>
+        <div class="label">Claude Code vs other tools</div>
+        <div class="desc">n8n, Cursor, Antigravity, Desktop, Cowork, OpenClaw, Gemini CLI.</div>
+        <div class="jump">Jump to questions →</div>
       </div>
-      <div class="section-tile">
+      <div class="section-tile" data-target="7" role="link" tabindex="0" aria-label="Jump to first question in CLAUDE.md and project setup">
         <div class="num">02</div>
-        <div class="label" contenteditable="true">CLAUDE.md & project setup</div>
-        <div class="desc" contenteditable="true">Project vs global. What it costs. When it loads.</div>
+        <div class="label">CLAUDE.md & project setup</div>
+        <div class="desc">Project vs global. What it costs. When it loads.</div>
+        <div class="jump">Jump to questions →</div>
       </div>
-      <div class="section-tile">
+      <div class="section-tile" data-target="11" role="link" tabindex="0" aria-label="Jump to first question in Skills">
         <div class="num">03</div>
-        <div class="label" contenteditable="true">Skills</div>
-        <div class="desc" contenteditable="true">Skills vs tools vs subagents. Picking, bundling, safety.</div>
+        <div class="label">Skills</div>
+        <div class="desc">Skills vs tools vs subagents. Picking, bundling, safety.</div>
+        <div class="jump">Jump to questions →</div>
       </div>
-      <div class="section-tile">
+      <div class="section-tile" data-target="14" role="link" tabindex="0" aria-label="Jump to first question in Agents and architecture">
         <div class="num">04</div>
-        <div class="label" contenteditable="true">Agents & architecture</div>
-        <div class="desc" contenteditable="true">The .claude folder, permissions, model routing, harness, hooks.</div>
+        <div class="label">Agents & architecture</div>
+        <div class="desc">The .claude folder, permissions, model routing, harness, hooks.</div>
+        <div class="jump">Jump to questions →</div>
       </div>
-      <div class="section-tile">
+      <div class="section-tile" data-target="19" role="link" tabindex="0" aria-label="Jump to first question in Automation">
         <div class="num">05</div>
-        <div class="label" contenteditable="true">Automation</div>
-        <div class="desc" contenteditable="true">End-to-end pipelines. Earning the right to step out of the loop.</div>
+        <div class="label">Automation</div>
+        <div class="desc">End-to-end pipelines. Earning the right to step out of the loop.</div>
+        <div class="jump">Jump to questions →</div>
       </div>
     </div>
   </div>
@@ -1209,10 +1164,10 @@ body.edit-active [contenteditable="true"]:focus {
     </div>
   </div>
   <div class="signal-card reveal-scale">
-    <div class="huge" contenteditable="true">01</div>
+    <div class="huge">01</div>
     <div>
-      <div class="section-meta" contenteditable="true">Section one</div>
-      <div class="section-name" contenteditable="true">Claude Code<br>vs. other tools.</div>
+      <div class="section-meta">Section one</div>
+      <div class="section-name">Claude Code<br>vs. other tools.</div>
     </div>
   </div>
 </section>
@@ -1228,27 +1183,27 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Can Claude Code replace n8n for automation/workflows?</h2>
+      <h2 class="question">Can Claude Code replace n8n for automation/workflows?</h2>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">n8n</span>
-        <h3 contenteditable="true">When the workflow is a known graph.</h3>
-        <p class="lede" contenteditable="true">These triggers, those steps, that destination. And when non-technical teammates need to inspect or own the flow visually.</p>
+        <h3>When the workflow is a known graph.</h3>
+        <p class="lede">These triggers, those steps, that destination. And when non-technical teammates need to inspect or own the flow visually.</p>
         <ul>
-          <li contenteditable="true">Triggers · steps · destination</li>
-          <li contenteditable="true">Inspect or own the flow visually</li>
-          <li contenteditable="true">Non-technical teammates</li>
+          <li>Triggers · steps · destination</li>
+          <li>Inspect or own the flow visually</li>
+          <li>Non-technical teammates</li>
         </ul>
       </div>
       <div class="col orange reveal-right">
         <span class="tag">Claude Code</span>
-        <h3 contenteditable="true">When the work involves judgment in the middle.</h3>
-        <p class="lede" contenteditable="true">Read this, decide what it is, route accordingly. An ecosystem running agentic loops — Plan → Do → Check → Repeat.</p>
+        <h3>When the work involves judgment in the middle.</h3>
+        <p class="lede">Read this, decide what it is, route accordingly. An ecosystem running agentic loops — Plan → Do → Check → Repeat.</p>
         <ul>
-          <li contenteditable="true">The right shape when "what to do next" is itself the work</li>
-          <li contenteditable="true">Plan → Do → Check → Repeat</li>
-          <li contenteditable="true">Plenty of teams run both</li>
+          <li>The right shape when "what to do next" is itself the work</li>
+          <li>Plan → Do → Check → Repeat</li>
+          <li>Plenty of teams run both</li>
         </ul>
       </div>
     </div>
@@ -1266,25 +1221,25 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">How does Claude Code compare with Cursor — and does Cursor have a CLAUDE.md equivalent?</h2>
+      <h2 class="question">How does Claude Code compare with Cursor — and does Cursor have a CLAUDE.md equivalent?</h2>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">Cursor</span>
-        <h3 contenteditable="true">Lives in the editor. Accelerates the code you're writing.</h3>
+        <h3>Lives in the editor. Accelerates the code you're writing.</h3>
         <ul>
-          <li contenteditable="true">Different surfaces</li>
-          <li contenteditable="true"><span class="vs-tag">AGENTS.md</span> is Cursor's CLAUDE.md analog</li>
-          <li contenteditable="true">Older: <code>.cursorrules</code> — same idea, different filename</li>
+          <li>Different surfaces</li>
+          <li><span class="vs-tag">AGENTS.md</span> is Cursor's CLAUDE.md analog</li>
+          <li>Older: <code>.cursorrules</code> — same idea, different filename</li>
         </ul>
       </div>
       <div class="col orange reveal-right">
         <span class="tag">Claude Code</span>
-        <h3 contenteditable="true">Lives in the terminal / IDE as an app / independent app.</h3>
+        <h3>Lives in the terminal / IDE as an app / independent app.</h3>
         <ul>
-          <li contenteditable="true">Tends to take on longer tasks</li>
-          <li contenteditable="true">Full features, refactors, multi-step jobs</li>
-          <li contenteditable="true">Most people don't pick a side — they reach for whichever fits the moment</li>
+          <li>Tends to take on longer tasks</li>
+          <li>Full features, refactors, multi-step jobs</li>
+          <li>Most people don't pick a side — they reach for whichever fits the moment</li>
         </ul>
       </div>
     </div>
@@ -1302,49 +1257,49 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Antigravity, Desktop, Cowork, OpenClaw — how do they all fit?</h2>
-      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Same family, different jobs. The mental model transfers across CLIs (Gemini's <code>GEMINI.md</code>, etc.) — the specifics don't.</p>
+      <h2 class="question">Antigravity, Desktop, Cowork, OpenClaw — how do they all fit?</h2>
+      <p class="answer reveal" style="margin-top:.6rem">Same family, different jobs. The mental model transfers across CLIs (Gemini's <code>GEMINI.md</code>, etc.) — the specifics don't.</p>
     </div>
     <div class="surface-grid reveal">
       <div class="surface featured">
         <span class="where">Terminal / IDE</span>
-        <div class="name" contenteditable="true">Claude Code</div>
-        <p class="desc" contenteditable="true">Built for a wider surface: codebase work, automation, agent teams, scheduled jobs. For builders shipping products.</p>
+        <div class="name">Claude Code</div>
+        <p class="desc">Built for a wider surface: codebase work, automation, agent teams, scheduled jobs. For builders shipping products.</p>
       </div>
       <div class="surface">
         <span class="where">Desktop app</span>
-        <div class="name" contenteditable="true">Claude Desktop</div>
-        <p class="desc" contenteditable="true">The visual chat interface with local file access and easier MCP setup. If the output is a conversation, Desktop fits.</p>
+        <div class="name">Claude Desktop</div>
+        <p class="desc">The visual chat interface with local file access and easier MCP setup. If the output is a conversation, Desktop fits.</p>
       </div>
       <div class="surface">
         <span class="where">Research preview · Jan 2026</span>
-        <div class="name" contenteditable="true">Claude Cowork</div>
-        <p class="desc" contenteditable="true">Anthropic's knowledge-work agent. Builds spreadsheets, decks, reports; connects to Google Drive, Gmail, DocuSign. For office workflows.</p>
+        <div class="name">Claude Cowork</div>
+        <p class="desc">Anthropic's knowledge-work agent. Builds spreadsheets, decks, reports; connects to Google Drive, Gmail, DocuSign. For office workflows.</p>
       </div>
       <div class="surface">
         <span class="where">Local · personal</span>
-        <div class="name" contenteditable="true">OpenClaw</div>
-        <p class="desc" contenteditable="true">More about personal automation across devices and runs locally. For personal/system automation. They aim at different jobs.</p>
+        <div class="name">OpenClaw</div>
+        <p class="desc">More about personal automation across devices and runs locally. For personal/system automation. They aim at different jobs.</p>
       </div>
       <div class="surface">
         <span class="where">Full-stack builder</span>
-        <div class="name" contenteditable="true">Antigravity</div>
-        <p class="desc" contenteditable="true">Built for full-stack app generation with high control over the build. Common pattern: prototype the app in Antigravity, then bring it into Claude Code when the work shifts from "build the thing" to "operate the thing."</p>
+        <div class="name">Antigravity</div>
+        <p class="desc">Built for full-stack app generation with high control over the build. Common pattern: prototype the app in Antigravity, then bring it into Claude Code when the work shifts from "build the thing" to "operate the thing."</p>
       </div>
       <div class="surface">
         <span class="where">CLI · Google</span>
-        <div class="name" contenteditable="true">Gemini CLI</div>
-        <p class="desc" contenteditable="true">Uses <code>GEMINI.md</code>, has its own extension model, and structures things differently. The mental model transfers; the specifics don't.</p>
+        <div class="name">Gemini CLI</div>
+        <p class="desc">Uses <code>GEMINI.md</code>, has its own extension model, and structures things differently. The mental model transfers; the specifics don't.</p>
       </div>
       <div class="surface">
         <span class="where">Workflow graphs</span>
-        <div class="name" contenteditable="true">n8n</div>
-        <p class="desc" contenteditable="true">Shines when the workflow is a known graph: these triggers, those steps, that destination. Plenty of teams run both.</p>
+        <div class="name">n8n</div>
+        <p class="desc">Shines when the workflow is a known graph: these triggers, those steps, that destination. Plenty of teams run both.</p>
       </div>
       <div class="surface">
         <span class="where">In-editor</span>
-        <div class="name" contenteditable="true">Cursor</div>
-        <p class="desc" contenteditable="true">Lives in the editor and accelerates the code you're writing. <code>AGENTS.md</code> is Cursor's CLAUDE.md analog.</p>
+        <div class="name">Cursor</div>
+        <p class="desc">Lives in the editor and accelerates the code you're writing. <code>AGENTS.md</code> is Cursor's CLAUDE.md analog.</p>
       </div>
     </div>
   </div>
@@ -1359,10 +1314,10 @@ body.edit-active [contenteditable="true"]:focus {
     <div class="crumbs"><span>Tools</span><span class="active">Setup</span><span>Skills</span><span>Agents</span><span>Automation</span></div>
   </div>
   <div class="signal-card reveal-scale">
-    <div class="huge" contenteditable="true">02</div>
+    <div class="huge">02</div>
     <div>
-      <div class="section-meta" contenteditable="true">Section two</div>
-      <div class="section-name" contenteditable="true">CLAUDE.md<br>& project setup.</div>
+      <div class="section-meta">Section two</div>
+      <div class="section-name">CLAUDE.md<br>& project setup.</div>
     </div>
   </div>
 </section>
@@ -1378,32 +1333,32 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Do you need a separate CLAUDE.md per project? And do these files cost tokens?</h2>
+      <h2 class="question">Do you need a separate CLAUDE.md per project? And do these files cost tokens?</h2>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">Project CLAUDE.md</span>
-        <h3 contenteditable="true">The brain of your project.</h3>
+        <h3>The brain of your project.</h3>
         <ul>
-          <li contenteditable="true">Loaded every session</li>
-          <li contenteditable="true">Carrying memory, glossary, definitions, and architecture notes</li>
-          <li contenteditable="true">Specific to this codebase</li>
-          <li contenteditable="true">A project-level CLAUDE.md is the standard pattern</li>
+          <li>Loaded every session</li>
+          <li>Carrying memory, glossary, definitions, and architecture notes</li>
+          <li>Specific to this codebase</li>
+          <li>A project-level CLAUDE.md is the standard pattern</li>
         </ul>
       </div>
       <div class="col reveal">
         <span class="tag">Global ~/.claude/CLAUDE.md</span>
-        <h3 contenteditable="true">Optional.</h3>
+        <h3>Optional.</h3>
         <ul>
-          <li contenteditable="true">Useful if you find yourself repeating the same preferences across repos</li>
-          <li contenteditable="true">Plenty of people only use the project file and never feel a gap</li>
-          <li contenteditable="true">Start there — add the global one if the same instructions keep piling up in three different projects</li>
+          <li>Useful if you find yourself repeating the same preferences across repos</li>
+          <li>Plenty of people only use the project file and never feel a gap</li>
+          <li>Start there — add the global one if the same instructions keep piling up in three different projects</li>
         </ul>
       </div>
       <div class="col orange reveal-right" style="grid-column: 1 / -1">
         <span class="tag">⚠ Token reality</span>
-        <h3 contenteditable="true">A bloated CLAUDE.md is the most common own-goal.</h3>
-        <p class="lede" contenteditable="true">CLAUDE.md is in context on every turn — it costs money on every turn and dilutes attention. Skills are lighter. Only their name and description sit in context, and the body loads only when the skill fires. A handful of well-scoped skills is cheap; a hundred poorly-scoped ones become noise. Skills aren't a free lunch, just a smaller bill.</p>
+        <h3>A bloated CLAUDE.md is the most common own-goal.</h3>
+        <p class="lede">CLAUDE.md is in context on every turn — it costs money on every turn and dilutes attention. Skills are lighter. Only their name and description sit in context, and the body loads only when the skill fires. A handful of well-scoped skills is cheap; a hundred poorly-scoped ones become noise. Skills aren't a free lunch, just a smaller bill.</p>
       </div>
     </div>
   </div>
@@ -1420,28 +1375,28 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Is "CLAUDE.md = what, SKILL.md = how" the right mental model?</h2>
-      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Fair shorthand. The cleaner cut is <strong>when</strong>.</p>
+      <h2 class="question">Is "CLAUDE.md = what, SKILL.md = how" the right mental model?</h2>
+      <p class="answer reveal" style="margin-top:.6rem">Fair shorthand. The cleaner cut is <strong>when</strong>.</p>
     </div>
     <div class="qa-split">
       <div class="col orange reveal-left">
         <span class="tag">CLAUDE.md</span>
-        <h3 contenteditable="true">WHAT — project memory.</h3>
-        <p class="lede" contenteditable="true">What's true about this codebase, always.</p>
+        <h3>WHAT — project memory.</h3>
+        <p class="lede">What's true about this codebase, always.</p>
         <ul>
-          <li contenteditable="true">Loaded every session</li>
-          <li contenteditable="true">Memory, glossary, definitions, architecture</li>
-          <li contenteditable="true">Always-on context</li>
+          <li>Loaded every session</li>
+          <li>Memory, glossary, definitions, architecture</li>
+          <li>Always-on context</li>
         </ul>
       </div>
       <div class="col reveal-right">
         <span class="tag">SKILL.md</span>
-        <h3 contenteditable="true">HOW — step-by-step guidance.</h3>
-        <p class="lede" contenteditable="true">How to do a particular kind of work when it shows up.</p>
+        <h3>HOW — step-by-step guidance.</h3>
+        <p class="lede">How to do a particular kind of work when it shows up.</p>
         <ul>
-          <li contenteditable="true">Step-by-step guidance for a specific task</li>
-          <li contenteditable="true">Loads only when its description matches the task at hand</li>
-          <li contenteditable="true">Lazy-loaded body</li>
+          <li>Step-by-step guidance for a specific task</li>
+          <li>Loads only when its description matches the task at hand</li>
+          <li>Lazy-loaded body</li>
         </ul>
       </div>
     </div>
@@ -1459,14 +1414,14 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="reveal">
       <span class="cta-eyebrow">// Half-time</span>
-      <h2 class="cta-headline" contenteditable="true">Want to go hands-on?</h2>
-      <p class="cta-sub" contenteditable="true">Spend half a day with us — fundamentals to API deployment, shipping a production-ready agent in Claude Code.</p>
+      <h2 class="cta-headline">Want to go hands-on?</h2>
+      <p class="cta-sub">Spend half a day with us — fundamentals to API deployment, shipping a production-ready agent in Claude Code.</p>
     </div>
     <a class="cta-banner-link reveal-scale" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener" aria-label="Enroll in the Maven workshop: Ship Your First Production AI Agent with Claude Code in Half a Day">
       <img src="assets/maven-workshop.webp" alt="Ship Your First Production AI Agent with Claude Code in Half a Day — Hamza Farooq & Aishwarya Ashok" />
     </a>
     <div class="cta-actions reveal">
-      <span class="cta-co" contenteditable="true">Co-taught by Hamza Farooq · Aishwarya Ashok</span>
+      <span class="cta-co">Co-taught by Hamza Farooq · Aishwarya Ashok</span>
       <a class="cta-button" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener">
         Enroll on Maven <span class="arrow">→</span>
       </a>
@@ -1483,10 +1438,10 @@ body.edit-active [contenteditable="true"]:focus {
     <div class="crumbs"><span>Tools</span><span>Setup</span><span class="active">Skills</span><span>Agents</span><span>Automation</span></div>
   </div>
   <div class="signal-card reveal-scale">
-    <div class="huge" contenteditable="true">03</div>
+    <div class="huge">03</div>
     <div>
-      <div class="section-meta" contenteditable="true">Section three</div>
-      <div class="section-name" contenteditable="true">Skills.</div>
+      <div class="section-meta">Section three</div>
+      <div class="section-name">Skills.</div>
     </div>
   </div>
 </section>
@@ -1502,26 +1457,26 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">How are skills different from tools — and from subagents?</h2>
+      <h2 class="question">How are skills different from tools — and from subagents?</h2>
     </div>
     <div class="surface-grid reveal" style="grid-template-columns: repeat(3, 1fr)">
       <div class="surface">
         <span class="where">= Capabilities</span>
-        <div class="name" contenteditable="true">Tools</div>
-        <p class="desc" contenteditable="true">Tools are capabilities: Read, Bash, WebFetch. Claude calls them and code runs.</p>
+        <div class="name">Tools</div>
+        <p class="desc">Tools are capabilities: Read, Bash, WebFetch. Claude calls them and code runs.</p>
       </div>
       <div class="surface featured">
         <span class="where">= Recipes for using tools</span>
-        <div class="name" contenteditable="true">Skills</div>
-        <p class="desc" contenteditable="true">Reusable instruction packs that tell Claude how to use those capabilities in a particular order to accomplish a particular thing. A saved prompt with superpowers — turning 1000 words of instructions into a single slash command.</p>
+        <div class="name">Skills</div>
+        <p class="desc">Reusable instruction packs that tell Claude how to use those capabilities in a particular order to accomplish a particular thing. A saved prompt with superpowers — turning 1000 words of instructions into a single slash command.</p>
       </div>
       <div class="surface">
         <span class="where">= Specialists</span>
-        <div class="name" contenteditable="true">Subagents</div>
-        <p class="desc" contenteditable="true">A specialized co-worker with its own context, its own tool access, and its own model preference. Returns a summary rather than a step-by-step.</p>
+        <div class="name">Subagents</div>
+        <p class="desc">A specialized co-worker with its own context, its own tool access, and its own model preference. Returns a summary rather than a step-by-step.</p>
       </div>
     </div>
-    <p class="pull reveal" style="margin-top:clamp(1rem,2vh,1.5rem)" contenteditable="true">Reach for a skill when you want to stay in the loop. Reach for a subagent when the work is bulky, parallelizable, or independent enough that a summary is the only part you actually need.</p>
+    <p class="pull reveal" style="margin-top:clamp(1rem,2vh,1.5rem)">Reach for a skill when you want to stay in the loop. Reach for a subagent when the work is bulky, parallelizable, or independent enough that a summary is the only part you actually need.</p>
   </div>
 </section>
 
@@ -1536,32 +1491,32 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">How does Claude pick a skill — and how do I trust one I downloaded?</h2>
+      <h2 class="question">How does Claude pick a skill — and how do I trust one I downloaded?</h2>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">Picking</span>
-        <h3 contenteditable="true">The description field is the trigger.</h3>
+        <h3>The description field is the trigger.</h3>
         <ul>
-          <li contenteditable="true">Claude reads each installed skill's description and auto-invokes the one that matches the task</li>
-          <li contenteditable="true">Vague descriptions don't fire, specific ones do</li>
-          <li contenteditable="true">Or call a skill explicitly with <code>/skill-name</code></li>
-          <li contenteditable="true">Not documentation — the matching surface, and the part most people underinvest in</li>
+          <li>Claude reads each installed skill's description and auto-invokes the one that matches the task</li>
+          <li>Vague descriptions don't fire, specific ones do</li>
+          <li>Or call a skill explicitly with <code>/skill-name</code></li>
+          <li>Not documentation — the matching surface, and the part most people underinvest in</li>
         </ul>
       </div>
       <div class="col reveal">
         <span class="tag">Bundling</span>
-        <h3 contenteditable="true">Separate is the more common recommendation.</h3>
+        <h3>Separate is the more common recommendation.</h3>
         <ul>
-          <li contenteditable="true">A bundled "do everything" skill ends up with a description so broad it triggers either always or never</li>
-          <li contenteditable="true">Match the shape of the skill to the shape of the trigger</li>
-          <li contenteditable="true">If two capabilities are genuinely always used together, one skill is fine</li>
+          <li>A bundled "do everything" skill ends up with a description so broad it triggers either always or never</li>
+          <li>Match the shape of the skill to the shape of the trigger</li>
+          <li>If two capabilities are genuinely always used together, one skill is fine</li>
         </ul>
       </div>
       <div class="col orange reveal-right" style="grid-column: 1 / -1">
         <span class="tag">⚠ Safety</span>
-        <h3 contenteditable="true">Read it like you'd read a shell script before piping it to bash.</h3>
-        <p class="lede" contenteditable="true">Two real risks: prompt injection that nudges Claude into something you didn't ask for, and Bash commands that touch your system. Open the SKILL.md, check what tools it declares, and look at any scripts it ships. Claude Code is permission-gated by default — but the first risk only gets caught by <strong>you</strong> reading the skill. Treat skills from strangers the way you'd treat any third-party code.</p>
+        <h3>Read it like you'd read a shell script before piping it to bash.</h3>
+        <p class="lede">Two real risks: prompt injection that nudges Claude into something you didn't ask for, and Bash commands that touch your system. Open the SKILL.md, check what tools it declares, and look at any scripts it ships. Claude Code is permission-gated by default — but the first risk only gets caught by <strong>you</strong> reading the skill. Treat skills from strangers the way you'd treat any third-party code.</p>
       </div>
     </div>
   </div>
@@ -1576,10 +1531,10 @@ body.edit-active [contenteditable="true"]:focus {
     <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span class="active">Agents</span><span>Automation</span></div>
   </div>
   <div class="signal-card reveal-scale">
-    <div class="huge" contenteditable="true">04</div>
+    <div class="huge">04</div>
     <div>
-      <div class="section-meta" contenteditable="true">Section four</div>
-      <div class="section-name" contenteditable="true">Agents,<br>architecture, control.</div>
+      <div class="section-meta">Section four</div>
+      <div class="section-name">Agents,<br>architecture, control.</div>
     </div>
   </div>
 </section>
@@ -1595,8 +1550,8 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Where do you centrally manage agents and subagents?</h2>
-      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">The filesystem — specifically the <code>.claude/</code> folder.</p>
+      <h2 class="question">Where do you centrally manage agents and subagents?</h2>
+      <p class="answer reveal" style="margin-top:.6rem">The filesystem — specifically the <code>.claude/</code> folder.</p>
     </div>
     <div class="tree">
       <div class="tree-block reveal-left">
@@ -1615,15 +1570,15 @@ body.edit-active [contenteditable="true"]:focus {
       <div class="tree-rules reveal-right">
         <div class="tree-rule">
           <span class="lbl">Subagents</span>
-          <p class="body" contenteditable="true">Each as a markdown file with frontmatter for system prompt, tool access, and model preference.</p>
+          <p class="body">Each as a markdown file with frontmatter for system prompt, tool access, and model preference.</p>
         </div>
         <div class="tree-rule">
           <span class="lbl">Tracking</span>
-          <p class="body" contenteditable="true">For interactive work, the transcript shows each invocation inline. Scheduled runs log themselves. Conversation transcripts sit under <code>~/.claude/projects/</code> and are greppable after the fact.</p>
+          <p class="body">For interactive work, the transcript shows each invocation inline. Scheduled runs log themselves. Conversation transcripts sit under <code>~/.claude/projects/</code> and are greppable after the fact.</p>
         </div>
         <div class="tree-rule">
           <span class="lbl">Recap</span>
-          <p class="body" contenteditable="true">The recent model (Opus 4.7) also gives a recap whenever agents execute on tasks.</p>
+          <p class="body">The recent model (Opus 4.7) also gives a recap whenever agents execute on tasks.</p>
         </div>
       </div>
     </div>
@@ -1641,27 +1596,27 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Where do tool access and model routing live?</h2>
+      <h2 class="question">Where do tool access and model routing live?</h2>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">Permissions · two layers</span>
-        <h3 contenteditable="true">Two layers.</h3>
+        <h3>Two layers.</h3>
         <ul>
-          <li contenteditable="true">Project-wide permissions live in <code>settings.json</code></li>
-          <li contenteditable="true">Subagents additionally declare their allowed tools in frontmatter — a narrower slice than the main session has</li>
-          <li contenteditable="true">CLAUDE.md and skills don't grant anything — they instruct behavior within permissions you've already drawn</li>
+          <li>Project-wide permissions live in <code>settings.json</code></li>
+          <li>Subagents additionally declare their allowed tools in frontmatter — a narrower slice than the main session has</li>
+          <li>CLAUDE.md and skills don't grant anything — they instruct behavior within permissions you've already drawn</li>
         </ul>
-        <p class="pull" style="margin-top:.6rem" contenteditable="true">Permission is harness-level.<br>Instruction is conversation-level.</p>
+        <p class="pull" style="margin-top:.6rem">Permission is harness-level.<br>Instruction is conversation-level.</p>
       </div>
       <div class="col orange reveal-right">
         <span class="tag">Model routing</span>
-        <h3 contenteditable="true">Each subagent declares a model preference in its frontmatter — that's the routing surface.</h3>
+        <h3>Each subagent declares a model preference in its frontmatter — that's the routing surface.</h3>
         <ul>
-          <li contenteditable="true">Cheap models (<strong>Haiku</strong>) for narrow, high-volume tasks like classifiers</li>
-          <li contenteditable="true">Capable models (<strong>Opus</strong>) for reasoning-heavy work</li>
-          <li contenteditable="true">The Plan → Do → Check loop: "powered by models that reason and tools that act"</li>
-          <li contenteditable="true">Routing right is mostly about matching cost, latency, and quality to what each step actually needs</li>
+          <li>Cheap models (<strong>Haiku</strong>) for narrow, high-volume tasks like classifiers</li>
+          <li>Capable models (<strong>Opus</strong>) for reasoning-heavy work</li>
+          <li>The Plan → Do → Check loop: "powered by models that reason and tools that act"</li>
+          <li>Routing right is mostly about matching cost, latency, and quality to what each step actually needs</li>
         </ul>
       </div>
     </div>
@@ -1679,33 +1634,33 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">What exactly is a "harness"?</h2>
-      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">The engine that turns the model from a text predictor into a working agent. The model can only produce text; the harness reads that text, runs the actions it implies, shows the model what happened, and loops until the work is done.</p>
+      <h2 class="question">What exactly is a "harness"?</h2>
+      <p class="answer reveal" style="margin-top:.6rem">The engine that turns the model from a text predictor into a working agent. The model can only produce text; the harness reads that text, runs the actions it implies, shows the model what happened, and loops until the work is done.</p>
     </div>
-    <p class="harness-quote reveal" contenteditable="true">The model <em>thinks</em>.<br>The harness <em>does</em>.</p>
+    <p class="harness-quote reveal">The model <em>thinks</em>.<br>The harness <em>does</em>.</p>
     <div class="pillars reveal">
       <div class="pillar">
         <div class="num">01</div>
-        <div class="name" contenteditable="true">The loop</div>
-        <p class="body" contenteditable="true">Keeps Plan → Do → Check → Repeat running until the task is complete.</p>
+        <div class="name">The loop</div>
+        <p class="body">Keeps Plan → Do → Check → Repeat running until the task is complete.</p>
       </div>
       <div class="pillar">
         <div class="num">02</div>
-        <div class="name" contenteditable="true">Tools</div>
-        <p class="body" contenteditable="true">Exposes file edits, terminal commands, search, and web access as things the model can call.</p>
+        <div class="name">Tools</div>
+        <p class="body">Exposes file edits, terminal commands, search, and web access as things the model can call.</p>
       </div>
       <div class="pillar">
         <div class="num">03</div>
-        <div class="name" contenteditable="true">Memory</div>
-        <p class="body" contenteditable="true">Keeps context coherent across long sessions.</p>
+        <div class="name">Memory</div>
+        <p class="body">Keeps context coherent across long sessions.</p>
       </div>
       <div class="pillar">
         <div class="num">04</div>
-        <div class="name" contenteditable="true">Guardrails</div>
-        <p class="body" contenteditable="true">The model never touches your system directly; every action flows through an allow-list, and risky moves require your approval.</p>
+        <div class="name">Guardrails</div>
+        <p class="body">The model never touches your system directly; every action flows through an allow-list, and risky moves require your approval.</p>
       </div>
     </div>
-    <p class="pull reveal" style="margin-top:clamp(.8rem,1.6vw,1.2rem)" contenteditable="true">Together they're an agent.</p>
+    <p class="pull reveal" style="margin-top:clamp(.8rem,1.6vw,1.2rem)">Together they're an agent.</p>
   </div>
 </section>
 
@@ -1720,26 +1675,26 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Why hooks for control measures, instead of just defining them in a skill?</h2>
-      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Different guarantees.</p>
+      <h2 class="question">Why hooks for control measures, instead of just defining them in a skill?</h2>
+      <p class="answer reveal" style="margin-top:.6rem">Different guarantees.</p>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">Skills</span>
-        <h3 contenteditable="true">Instructions Claude reads.</h3>
+        <h3>Instructions Claude reads.</h3>
         <ul>
-          <li contenteditable="true">Claude decides whether to follow them</li>
-          <li contenteditable="true">Usually does, but not always</li>
-          <li contenteditable="true">If guidance is enough, a skill is lighter</li>
+          <li>Claude decides whether to follow them</li>
+          <li>Usually does, but not always</li>
+          <li>If guidance is enough, a skill is lighter</li>
         </ul>
       </div>
       <div class="col orange reveal-right">
         <span class="tag">Hooks</span>
-        <h3 contenteditable="true">The deterministic control layer.</h3>
+        <h3>The deterministic control layer.</h3>
         <ul>
-          <li contenteditable="true">Scripts that run every time on the events you specify (PreToolUse, PostToolUse, Stop), with no exceptions</li>
-          <li contenteditable="true">If you need a <strong>guarantee</strong> — blocking <code>rm -rf</code>, auto-formatting on edit, notifying on completion — you need a hook</li>
-          <li contenteditable="true">Rigid by design, and rigidity has its place</li>
+          <li>Scripts that run every time on the events you specify (PreToolUse, PostToolUse, Stop), with no exceptions</li>
+          <li>If you need a <strong>guarantee</strong> — blocking <code>rm -rf</code>, auto-formatting on edit, notifying on completion — you need a hook</li>
+          <li>Rigid by design, and rigidity has its place</li>
         </ul>
       </div>
     </div>
@@ -1755,10 +1710,10 @@ body.edit-active [contenteditable="true"]:focus {
     <div class="crumbs"><span>Tools</span><span>Setup</span><span>Skills</span><span>Agents</span><span class="active">Automation</span></div>
   </div>
   <div class="signal-card reveal-scale">
-    <div class="huge" contenteditable="true">05</div>
+    <div class="huge">05</div>
     <div>
-      <div class="section-meta" contenteditable="true">Section five</div>
-      <div class="section-name" contenteditable="true">Automation.</div>
+      <div class="section-meta">Section five</div>
+      <div class="section-name">Automation.</div>
     </div>
   </div>
 </section>
@@ -1774,26 +1729,26 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="q-kicker">Question</span>
-      <h2 class="question" contenteditable="true">Can you fully automate topic → draft → publish on a schedule?</h2>
-      <p class="answer reveal" style="margin-top:.6rem" contenteditable="true">Yes. The pieces map directly to the rest of the deck.</p>
+      <h2 class="question">Can you fully automate topic → draft → publish on a schedule?</h2>
+      <p class="answer reveal" style="margin-top:.6rem">Yes. The pieces map directly to the rest of the deck.</p>
     </div>
     <div class="qa-split">
       <div class="col reveal-left">
         <span class="tag">The pipeline</span>
-        <h3 contenteditable="true">Subagents do the work.</h3>
+        <h3>Subagents do the work.</h3>
         <ul>
-          <li contenteditable="true">Research, drafting, formatting, and publishing</li>
-          <li contenteditable="true">MCP connectors hit external systems — Substack, Drive, Gmail</li>
-          <li contenteditable="true">Schedule recurring tasks: one of the listed Claude Code agent capabilities</li>
+          <li>Research, drafting, formatting, and publishing</li>
+          <li>MCP connectors hit external systems — Substack, Drive, Gmail</li>
+          <li>Schedule recurring tasks: one of the listed Claude Code agent capabilities</li>
         </ul>
       </div>
       <div class="col orange reveal-right">
         <span class="tag">⚠ The harder part</span>
-        <h3 contenteditable="true">Earning the right to take yourself out of the loop.</h3>
+        <h3>Earning the right to take yourself out of the loop.</h3>
         <ul>
-          <li contenteditable="true">Start <strong>semi-autonomous</strong>: agent drafts, you approve</li>
-          <li contenteditable="true">Watch what goes wrong for a couple of weeks</li>
-          <li contenteditable="true">Once the failure modes are predictable and acceptable, tighten the loop</li>
+          <li>Start <strong>semi-autonomous</strong>: agent drafts, you approve</li>
+          <li>Watch what goes wrong for a couple of weeks</li>
+          <li>Once the failure modes are predictable and acceptable, tighten the loop</li>
         </ul>
       </div>
     </div>
@@ -1811,14 +1766,14 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="reveal">
       <span class="cta-eyebrow">// One more thing</span>
-      <h2 class="cta-headline" contenteditable="true">From these FAQs to your first production agent.</h2>
-      <p class="cta-sub" contenteditable="true">If today's questions sparked something — the workshop is where you build it. Half a day. Live, hands-on, end-to-end.</p>
+      <h2 class="cta-headline">From these FAQs to your first production agent.</h2>
+      <p class="cta-sub">If today's questions sparked something — the workshop is where you build it. Half a day. Live, hands-on, end-to-end.</p>
     </div>
     <a class="cta-banner-link reveal-scale" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener" aria-label="Reserve your spot in the Maven workshop">
       <img src="assets/maven-workshop.webp" alt="Ship Your First Production AI Agent with Claude Code in Half a Day" />
     </a>
     <div class="cta-actions reveal">
-      <span class="cta-co" contenteditable="true">Hamza Farooq · Aishwarya Ashok · Maven</span>
+      <span class="cta-co">Hamza Farooq · Aishwarya Ashok · Maven</span>
       <a class="cta-button" href="https://maven.com/boring-bot/gen-ai-bootcamp-for-leaders" target="_blank" rel="noopener">
         Reserve your spot <span class="arrow">→</span>
       </a>
@@ -1837,7 +1792,7 @@ body.edit-active [contenteditable="true"]:focus {
   <div class="slide-content">
     <div class="kicker-block reveal">
       <span class="eyebrow">// Starter repos & demos</span>
-      <h2 class="question" contenteditable="true">Resources to keep building.</h2>
+      <h2 class="question">Resources to keep building.</h2>
     </div>
     <div class="resource-list reveal">
       <a class="resource-item" href="https://github.com/hamzafarooq/claude-code-starter" target="_blank" rel="noopener">
@@ -1902,6 +1857,7 @@ class SlidePresentation {
     this.navDotsContainer = document.getElementById('navDots');
 
     this.setupCrumbNav();             // build clickable section crumbs (must run before observer)
+    this.setupAgendaTiles();          // wire agenda section tiles to jump to first Q in section
     this.setupIntersectionObserver();
     this.setupKeyboardNav();
     this.setupTouchNav();
@@ -1953,6 +1909,21 @@ class SlidePresentation {
     });
   }
 
+  // Agenda slide tiles each carry data-target — click or Enter/Space jumps to that slide.
+  setupAgendaTiles() {
+    document.querySelectorAll('.section-tile[data-target]').forEach(tile => {
+      const target = parseInt(tile.dataset.target, 10);
+      if (Number.isNaN(target)) return;
+      tile.addEventListener('click', () => this.goTo(target));
+      tile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.goTo(target);
+        }
+      });
+    });
+  }
+
   // Add .visible class when slide enters viewport — triggers CSS reveal
   setupIntersectionObserver() {
     const obs = new IntersectionObserver((entries) => {
@@ -1968,10 +1939,9 @@ class SlidePresentation {
     this.slides.forEach(s => obs.observe(s));
   }
 
-  // Arrow keys (↑↓←→), Space, Page Up/Down, < > , . — skip when editing text
+  // Arrow keys (↑↓←→), Space, Page Up/Down, < > , .
   setupKeyboardNav() {
     document.addEventListener('keydown', (e) => {
-      if (document.activeElement?.getAttribute('contenteditable') === 'true') return;
       const k = e.key;
       if (k === 'ArrowDown' || k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === '>' || k === '.') {
         e.preventDefault(); this.next();
@@ -2036,142 +2006,16 @@ class SlidePresentation {
   }
 }
 
-/* ===========================================
-   INLINE EDITING CONTROLLER (opt-in: enabled)
-   Hover top-left corner or press E to enter edit mode.
-   Click any text to edit, Ctrl+S to export edited file.
-   =========================================== */
-class InlineEditor {
-  constructor() {
-    this.isActive = false;
-    this.STORAGE_KEY = 'claude-code-faq-deck-edits-v4';
-    this.banner = document.getElementById('editBanner');
-    this.toggle = document.getElementById('editToggle');
-    this.hotzone = document.querySelector('.edit-hotzone');
-
-    this.bindToggle();
-    this.bindHotzone();
-    this.bindKeyboard();
-    this.bindAutosave();
-    this.restoreEdits();
-  }
-
-  bindToggle() {
-    this.toggle.addEventListener('click', () => this.toggleEditMode());
-  }
-
-  // Hotzone hover with 400ms grace period — required because pointer-events:none
-  // breaks the hover chain when using CSS-only ~ sibling selectors.
-  bindHotzone() {
-    let hideTimeout = null;
-    const show = () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); };
-    const scheduleHide = () => {
-      hideTimeout = setTimeout(() => {
-        if (!this.isActive) this.toggle.classList.remove('show');
-      }, 400);
-    };
-    this.hotzone.addEventListener('mouseenter', show);
-    this.hotzone.addEventListener('mouseleave', scheduleHide);
-    this.toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-    this.toggle.addEventListener('mouseleave', scheduleHide);
-    this.hotzone.addEventListener('click', () => this.toggleEditMode());
-  }
-
-  bindKeyboard() {
-    document.addEventListener('keydown', (e) => {
-      // E toggles edit mode (skip if currently editing text)
-      if ((e.key === 'e' || e.key === 'E') &&
-          !e.target.getAttribute?.('contenteditable') &&
-          !e.metaKey && !e.ctrlKey) {
-        this.toggleEditMode();
-      }
-      // Ctrl/Cmd + S exports
-      if ((e.key === 's' || e.key === 'S') && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        this.exportFile();
-      }
-    });
-  }
-
-  bindAutosave() {
-    document.addEventListener('input', (e) => {
-      if (e.target.getAttribute('contenteditable') === 'true') {
-        this.saveEdits();
-      }
-    });
-  }
-
-  toggleEditMode() {
-    this.isActive = !this.isActive;
-    document.body.classList.toggle('edit-active', this.isActive);
-    this.banner.classList.toggle('active', this.isActive);
-    this.toggle.classList.toggle('active', this.isActive);
-    if (this.isActive) this.toggle.classList.add('show');
-
-    // Toggle contenteditable on every editable element
-    document.querySelectorAll('[contenteditable]').forEach(el => {
-      // Only toggle elements that were originally editable (skip false ones in title slide)
-      if (this.isActive) {
-        if (el.getAttribute('contenteditable') !== 'false') el.setAttribute('contenteditable', 'true');
-      } else {
-        if (el.getAttribute('contenteditable') === 'true') el.setAttribute('contenteditable', 'false');
-      }
-    });
-  }
-
-  saveEdits() {
-    const edits = {};
-    document.querySelectorAll('[contenteditable]').forEach((el, i) => {
-      edits[i] = el.innerHTML;
-    });
-    try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(edits)); } catch (e) {}
-  }
-
-  restoreEdits() {
-    try {
-      const saved = localStorage.getItem(this.STORAGE_KEY);
-      if (!saved) return;
-      const edits = JSON.parse(saved);
-      document.querySelectorAll('[contenteditable]').forEach((el, i) => {
-        if (edits[i] !== undefined) el.innerHTML = edits[i];
-      });
-    } catch (e) {}
-  }
-
-  // CRITICAL: strip edit state before capturing outerHTML, otherwise the
-  // saved file opens permanently in edit mode (dashed outlines, banner, etc.)
-  exportFile() {
-    const editableEls = Array.from(document.querySelectorAll('[contenteditable="true"]'));
-    editableEls.forEach(el => el.removeAttribute('contenteditable'));
-    document.body.classList.remove('edit-active');
-    this.toggle.classList.remove('active', 'show');
-    this.banner.classList.remove('active', 'show');
-
-    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-
-    // Restore edit state so the user can keep editing
-    document.body.classList.add('edit-active');
-    editableEls.forEach(el => el.setAttribute('contenteditable', 'true'));
-    this.toggle.classList.add('active', 'show');
-    this.banner.classList.add('active');
-
-    const blob = new Blob([html], { type: 'text/html' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'claude-code-masterclass-faq.html';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-}
-
 /* === Boot === */
 const presentation = new SlidePresentation();
-const editor = new InlineEditor();
 
 // Mark first slide visible immediately so animations fire on load
 window.addEventListener('load', () => {
   document.querySelector('.slide')?.classList.add('visible');
 });
+
+// Clear any stale localStorage from the old inline-editor (no longer used).
+try { localStorage.removeItem('claude-code-faq-deck-edits-v4'); } catch (e) {}
 </script>
 </body>
 </html>
