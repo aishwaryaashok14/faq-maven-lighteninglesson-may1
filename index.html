@@ -1883,8 +1883,9 @@ body.edit-active [contenteditable="true"]:focus {
    - Inline editing (opt-in: enabled)
    =========================================== */
 // Section navigation map — each entry: name + slide index (0-based) to jump to.
-// Workshop is the last section, points to the near-end CTA slide.
+// Home jumps to the title; Workshop is the last section (near-end CTA).
 const SECTIONS = [
+  { name: 'Home',       target: 0  },  // title slide
   { name: 'Tools',      target: 2  },  // § 01 divider
   { name: 'Setup',      target: 6  },  // § 02 divider
   { name: 'Skills',     target: 10 },  // § 03 divider
@@ -1910,9 +1911,10 @@ class SlidePresentation {
   }
 
   // Determine which section is "active" for a given slide index.
-  // CTA slides (idx 9, 20) and Resources (21) light up Workshop.
+  // Title + agenda → Home. CTA slides (9, 20) + Resources (21) → Workshop.
   activeForSlide(i) {
-    if (i < 6)   return 'Tools';        // 0..5: title, agenda, §01 divider, n8n, Cursor, Surface map
+    if (i < 2)   return 'Home';         // 0..1: title, agenda
+    if (i < 6)   return 'Tools';        // 2..5: §01 divider, n8n, Cursor, Surface map
     if (i < 9)   return 'Setup';        // 6..8: §02 divider, CLAUDE.md, vs SKILL.md
     if (i === 9) return 'Workshop';     // mid-deck CTA
     if (i < 13)  return 'Skills';       // 10..12: §03 divider, Skills vs, Picking
